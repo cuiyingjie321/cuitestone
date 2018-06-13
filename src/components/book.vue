@@ -174,7 +174,7 @@ export default {
       // 加入书架
     },
 	getbookrecommend: function () {
-		this.$http.get("/wap/book/bookRecommend",{params:{book_id:this.$route.query.book_id}}).then(function(res){
+		this.$http.get("/wap/book/bookRecommend",{params:{book_id:this.$route.query.bookid}}).then(function(res){
 			this.bookRecommendData  = res.data
 			this.bookRecommend 	= this.bookRecommendData.data		
 		},function(res){  
@@ -182,7 +182,7 @@ export default {
 		})
 	},
 	getbookinfo: function () {
-		this.$http.get("/wap/book",{params:{book_id:this.$route.query.book_id}}).then(function(res){
+		this.$http.get("/wap/book",{params:{book_id:this.$route.query.bookid}}).then(function(res){
 			this.dataInfo  	= res.data
 			this.dataDetail 	= this.dataInfo.data
 			this.chapterInfo 	= this.dataDetail.books.chapter_info			
