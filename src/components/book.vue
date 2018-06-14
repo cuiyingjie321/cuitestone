@@ -183,7 +183,7 @@ export default {
 	},
 	getbookinfo: function () {
 		this.$http.get("/wap/book",{params:{book_id:this.$route.query.bookid}}).then(function(res){
-			this.dataInfo  	= res.data22222
+			this.dataInfo  	= res.data333
 			this.dataDetail 	= this.dataInfo.data
 			this.chapterInfo 	= this.dataDetail.books.chapter_info			
 		},function(res){  
