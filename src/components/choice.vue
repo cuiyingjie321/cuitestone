@@ -4,10 +4,10 @@
     <section class="mClassify">
       <ul>
         <li><router-link :to="'/classifylist?id='+dataInfo.first.first_data.category_id"  class="mClassify_1"><span></span><p>{{ dataInfo.first.first_data.category_name }}</p></router-link></li>
-		<li><router-link :to="'/classifylist?id='+dataInfo.second.second_data.category_id" class="mClassify_2"><span></span><p>{{ dataInfo.second.second_data.category_name }}</p></router-link></li>
-		<li><router-link :to="'/classifylist?id='+dataInfo.third.third_data.category_id" class="mClassify_3"><span></span><p>{{ dataInfo.third.third_data.category_name }}</p></router-link></li>
-		<li><router-link to="/list" class="mClassify_4"><span></span><p>{{ dataInfo.fourth.fourth_name }}</p></router-link></li>
-	  </ul>
+        <li><router-link :to="'/classifylist?id='+dataInfo.second.second_data.category_id" class="mClassify_2"><span></span><p>{{ dataInfo.second.second_data.category_name }}</p></router-link></li>
+        <li><router-link :to="'/classifylist?id='+dataInfo.third.third_data.category_id" class="mClassify_3"><span></span><p>{{ dataInfo.third.third_data.category_name }}</p></router-link></li>
+        <li><router-link to="/list" class="mClassify_4"><span></span><p>{{ dataInfo.fourth.fourth_name }}</p></router-link></li>
+    </ul>
     </section>
     <section class="mContent_w">
       <div class="mModule mGoodBook_w">
@@ -61,26 +61,27 @@
 export default {
   data () {
     return {
-	  allData: [],
-	  dataInfo: []
+      allData: [],
+      dataInfo: []
     }
   },
   methods: {
     parameter: function () {
       this.$emit('mParameter', {'mType': '1', 'mNav': 'true', 'mIndex': '1'})
     },
-	getbooklist: function () {
-		this.$http.get("/wap/chosen",{}).then(function(res){
-			this.allData  = res.data
-			this.dataInfo = this.allData.data			
-		},function(res){  
-			alert(res.status) 
-		})
-	}
+    getbooklist: function () {
+      this.$http.get('/wap/chosen', {}).then(function (res) {
+        this.allData = res.data
+        this.dataInfo = this.allData.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
   },
   mounted: function () {
     this.parameter()
-	this.getbooklist()
+    this.getbooklist()
   }
 }
 </script>

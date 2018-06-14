@@ -19,26 +19,27 @@
 export default {
   data () {
     return {
-	  dataInfo:[],
-	  bookList:[]
+      dataInfo: [],
+      bookList: []
     }
   },
   methods: {
-	parameter: function () {
+    parameter: function () {
       this.$emit('mParameter', {'mType': '3'})
     },
-	getbooklist: function () {
-		this.$http.get("/wap/store/categoryInfo",{}).then(function(res){
-			this.dataInfo  	= res.data
-			this.bookList 	= this.dataInfo.data			
-		},function(res){  
-			alert(res.status) 
-		})
-	}
+    getbooklist: function () {
+      this.$http.get('/wap/store/categoryInfo', {}).then(function (res) {
+        this.dataInfo = res.data
+        this.bookList = this.dataInfo.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
   },
   mounted: function () {
     this.parameter()
-	this.getbooklist()
+    this.getbooklist()
   }
 }
 </script>

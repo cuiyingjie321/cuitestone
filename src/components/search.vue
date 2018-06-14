@@ -41,22 +41,20 @@
   </div>
 </template>
 <script>
-import test from './../assets/images/mImg_1.jpg'
 // default 默认关键词,mKeyword 搜索关键词,History 历史搜索列表,Hot 热门搜索列表,Result 结果列表
 export default {
   data () {
-      return {
+    return {
       historyData: [],
       hotSearchData: [],
-      mKeyword:[],
-      booklist:[],
-      relatedBook:[],
-      descInfo:[]
+      booklist: [],
+      relatedBook: [],
+      descInfo: []
     }
   },
   props: ['mKeyword'],
-  watch:{
-    mKeyword:'getbooklist' 
+  watch: {
+    mKeyword: 'getbooklist'
   },
   methods: {
     parameter: function () {
@@ -66,26 +64,28 @@ export default {
       // 删除搜索记录
       this.History = ''
     },
-	//搜索历史
-	getsearchhistory: function () {
-		this.$http.get("/wap/search/searchHistory",{params:{book_id:this.$route.query.book_id}}).then(function(res){
-			this.historyData  = res.data.data.search_list
-			this.hotSearchData  = res.data.data.hot_recommend
-		},function(res){  
-			alert(res.status)
-		})
-	},
-	//搜索结果
-	getbooklist: function (curVal,oldVal) {
-		this.$http.get("/wap/search",{params:{keywords:curVal}}).then(function(res){
-			this.booklist  	= res.data.data.books	
-      this.descInfo       = res.data.data.desc
-      this.relatedBook       = res.data.data.recommend
-		},function(res){  
-			alert(res.status) 
-		})
-	}
-	//缺少同类书籍推荐
+    // 搜索历史
+    getsearchhistory: function () {
+      this.$http.get('/wap/search/searchHistory', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.historyData = res.data.data.search_list
+        this.hotSearchData = res.data.data.hot_recommend
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    // 搜索结果
+    getbooklist: function (curVal, oldVal) {
+      this.$http.get('/wap/search', {'params': {'keywords': curVal}}).then(function (res) {
+        this.booklist = res.data.data.books
+        this.descInfo = res.data.data.desc
+        this.relatedBook = res.data.data.recommend
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
+  // 缺少同类书籍推荐
   },
   mounted: function () {
     this.parameter()

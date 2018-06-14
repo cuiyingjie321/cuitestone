@@ -44,17 +44,16 @@
 </template>
 
 <script>
-import test from './../assets/images/mImg_1.jpg'
 // mMoreInfo_Zs 字数,mMoreInfo_Dx 大小,mMoreInfo_Rq 日期,mMoreInfo_Cbs 出版社,mMoreInfo_Sh 书号,mMoreInfo_Mz 免责声明,mSideNav 是否显示侧导航,Relevant 喜欢这本书的人也喜欢列表,Book 当前书籍信息,BookList 书籍目录
 export default {
   data () {
     return {
-      dataInfo:[],
-      dataDetail:[],
-      chapterInfo:[],
-      bookRecommendData:[],
-      bookRecommend:[],
-      mSideNav: '',
+      dataInfo: [],
+      dataDetail: [],
+      chapterInfo: [],
+      bookRecommendData: [],
+      bookRecommend: [],
+      mSideNav: ''
     }
   },
   methods: {
@@ -68,28 +67,30 @@ export default {
     mBookShelf: function () {
       // 加入书架
     },
-	getbookrecommend: function () {
-		this.$http.get("/wap/book/bookRecommend",{params:{book_id:this.$route.query.book_id}}).then(function(res){
-			this.bookRecommendData  = res.data
-			this.bookRecommend 	= this.bookRecommendData.data		
-		},function(res){  
-			alert(res.status) 
-		})
-	},
-	getbookinfo: function () {
-		this.$http.get("/wap/book",{params:{book_id:this.$route.query.book_id}}).then(function(res){
-			this.dataInfo  	= res.data
-			this.dataDetail 	= this.dataInfo.data
-			this.chapterInfo 	= this.dataDetail.books.chapter_info			
-		},function(res){  
-			alert(res.status) 
-		})
-	} 
+    getbookrecommend: function () {
+      this.$http.get('/wap/book/bookRecommend', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.bookRecommendData = res.data
+        this.bookRecommend = this.bookRecommendData.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    getbookinfo: function () {
+      this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.dataInfo = res.data
+        this.dataDetail = this.dataInfo.data
+        this.chapterInfo = this.dataDetail.books.chapter_info
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
   },
   mounted: function () {
     this.parameter()
     this.getbookinfo()
-    this.getbookrecommend()	
+    this.getbookrecommend()
   }
 }
 </script>

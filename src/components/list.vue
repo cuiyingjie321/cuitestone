@@ -15,31 +15,31 @@
 </template>
 
 <script>
-import test from './../assets/images/mImg_1.jpg'
 // mTitle 标题,Classify 书城分类
 export default {
   data () {
     return {
-	  dataInfo:[],
-	  bookList:[]
+      dataInfo: [],
+      bookList: []
     }
   },
   methods: {
     parameter: function () {
       this.$emit('mParameter', {'mType': '0', 'mNav': 'true', 'mIndex': '2'})
     },
-	getbooklist: function () {
-		this.$http.get("/wap/store",{}).then(function(res){
-			this.dataInfo  = res.data
-			this.bookList = this.dataInfo.data			
-		},function(res){  
-			alert(res.status) 
-		})
-	}
+    getbooklist: function () {
+      this.$http.get('/wap/store', {}).then(function (res) {
+        this.dataInfo = res.data
+        this.bookList = this.dataInfo.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
   },
   mounted: function () {
     this.parameter()
-	this.getbooklist()
+    this.getbooklist()
   }
 }
 </script>

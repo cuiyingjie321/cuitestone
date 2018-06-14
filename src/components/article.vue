@@ -1,27 +1,7 @@
 <template>
   <div id="main" class="main">
     <div @touchstart="PagingStart($event)" @touchend="PagingEnd($event)" class="mAticle" :style="'font-size:' + ( mASetup_Font / 75 ) +'rem'" @click="mAticleBtn">
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章唯若初见第一章唯若初见第一章唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
-      <p>第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章 唯若初见第一章</p>
+      <p v-for="list in mChaptercontent" :key="list">{{ list }}</p>
     </div>
     <div v-if="mAticleSetup && mAticleNav" class="mASetup">
       <!-- 事件暂时调用的是章节进度条 <div class="mASetup_Bright">
@@ -94,7 +74,7 @@
 export default {
   data () {
     return {
-      mBookName: '初遇',
+      mBookName: '',
       mSideNav: '',
       mPagingBar: '',
       mAticleSetup: 'true',
@@ -106,6 +86,7 @@ export default {
       mDayTitle: '日间',
       mDayStyle: '',
       mPercent: '',
+      mChaptercontent: [],
       BookList: [{
         href: '/article?id=1&chapter=1',
         title: '版权信息',
@@ -300,10 +281,30 @@ export default {
       } else if (this.PagingStartX - this.PagingEndX < -50) {
         console.log('→后一页')
       }
+    },
+    getchaptercontent: function () {
+      this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id}}).then(function (res) {
+        this.mBookName = res.data.data.title
+        this.mChaptercontent = res.data.data.content.split('\n')
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    getbookinfo: function () {
+      this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.dataInfo = res.data
+        this.dataDetail = this.dataInfo.data
+        this.chapterInfo = this.dataDetail.books.chapter_info
+      },
+      function (res) {
+        alert(res.status)
+      })
     }
   },
   mounted: function () {
     this.parameter()
+    this.getchaptercontent()
     this.dragWidth = (document.getElementById('main').offsetWidth / 750) * (6.466667 * 75)
   },
   filters: {

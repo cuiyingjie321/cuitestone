@@ -5,7 +5,7 @@
         <h3 class="mModuleTi">我的书架</h3>
         <ul class="mModuleList">
           <li v-for="list in MyBookShelf.data.books" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
-        </ul>	
+        </ul>
         <div v-if="!MyBookShelf" class="mModuleNull">还没有阅读，快去阅读吧~</div>
       </div>
       <div class="mModule">
@@ -30,25 +30,27 @@ export default {
     parameter: function () {
       this.$emit('mParameter', {'mType': '0', 'mNav': 'true', 'mIndex': '0'})
     },
-	getbooklist: function () {
-		this.$http.get("/wap",{}).then(function(res){
-			this.MyBookShelf = res.data 
-		},function(res){  
-			alert(res.status) 
-		})
-	},
-	getbookRecommend: function () {
-		this.$http.get("/wap/index/bookRecommend",{}).then(function(res){
-			this.Relevant = res.data
-		},function(res){  
-			alert(res.status) 
-		})
-	}
+    getbooklist: function () {
+      this.$http.get('/wap', {}).then(function (res) {
+        this.MyBookShelf = res.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    getbookRecommend: function () {
+      this.$http.get('/wap/index/bookRecommend', {}).then(function (res) {
+        this.Relevant = res.data
+      },
+      function (res) {
+        alert(res.status)
+      })
+    }
   },
   mounted: function () {
     this.parameter()
-	this.getbooklist()
-	this.getbookRecommend()
+    this.getbooklist()
+    this.getbookRecommend()
   }
 }
 </script>
