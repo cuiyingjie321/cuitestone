@@ -13,7 +13,7 @@
       </span>
     </div>
     <div v-if="mKeyword" class="mResult">
-      <div class="mResult_Ti">99%的用户搜索该词后阅读了这本书</div>
+      <div class="mResult_Ti">{{ descInfo }}</div>
       <ul class="mModuleLista mModuleLista_1">
         <li v-for="list in booklist" :key="list.id">
           <router-link :to="'/book?book_id='+list.book_id" class="mModuleaL"><img :src="list.cover_img" :alt="list.name"/></router-link>
@@ -27,60 +27,31 @@
       </ul>
       <div class="mResult_Ti">为您推荐同类书籍</div>
       <ul class="mModuleLista mModuleLista_1">
-        <li v-for="list in Recommend" :key="list.id">
-          <router-link :to="list.href" class="mModuleaL"><img :src="list.img" :alt="list.title"/></router-link>
+        <li v-for="list in relatedBook" :key="list.id">
+          <router-link :to="'/book?book_id='+list.book_id" class="mModuleaL"><img :src="list.cover_img" :alt="list.name"/></router-link>
           <div class="mModuleaR">
-            <div class="mModuleaR_Ti"><router-link :to="list.href">{{ list.title }}</router-link></div>
-            <div class="mModuleaR_Te">{{ list.introduce }}</div>
+            <div class="mModuleaR_Ti"><router-link :to="'/book?book_id='+list.book_id">{{ list.name }}</router-link></div>
+            <div class="mModuleaR_Te">{{ list.desc }}</div>
           </div>
           <div class="mModuleaR_Author">{{ list.author }}</div>
-          <div class="mModuleaR_Read">{{ list.read }}人阅读</div>
+          <div class="mModuleaR_Read">{{ list.read_num }}人阅读</div>
         </li>
       </ul>
     </div>
   </div>
 </template>
-
 <script>
 import test from './../assets/images/mImg_1.jpg'
 // default 默认关键词,mKeyword 搜索关键词,History 历史搜索列表,Hot 热门搜索列表,Result 结果列表
 export default {
   data () {
-    return {
-	  historyData: [],
-	  hotSearchData: [],
-	  mKeyword:[],
-	  booklist:[],
-      Result: [{
-        href: '/book',
-        title: '我所有的朋友都死了1',
-        introduce: '世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多',
-        author: '洛城东',
-        read: '129393',
-        img: test
-      }],
-      Recommend: [{
-        href: '/book',
-        title: '我所有的朋友都死了1',
-        introduce: '世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多',
-        author: '洛城东',
-        read: '129393',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了2',
-        introduce: '世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多',
-        author: '洛城东',
-        read: '129393',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了3',
-        introduce: '世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多',
-        author: '洛城东',
-        read: '129393',
-        img: test
-      }]
+      return {
+      historyData: [],
+      hotSearchData: [],
+      mKeyword:[],
+      booklist:[],
+      relatedBook:[],
+      descInfo:[]
     }
   },
   props: ['mKeyword'],
@@ -108,6 +79,8 @@ export default {
 	getbooklist: function (curVal,oldVal) {
 		this.$http.get("/wap/search",{params:{keywords:curVal}}).then(function(res){
 			this.booklist  	= res.data.data.books	
+      this.descInfo       = res.data.data.desc
+      this.relatedBook       = res.data.data.recommend
 		},function(res){  
 			alert(res.status) 
 		})
@@ -116,7 +89,7 @@ export default {
   },
   mounted: function () {
     this.parameter()
-	this.getsearchhistory()
+    this.getsearchhistory()
   }
 }
 </script>

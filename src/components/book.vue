@@ -29,15 +29,6 @@
         <li v-for="list in bookRecommend.books" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
       </ul>
     </div>
-    <div class="mModule">
-      <h3 class="mModuleTi">图书更多信息</h3>
-      <div v-if="mMoreInfo_Zs" class="mMoreInfo">字数：{{ mMoreInfo_Zs }}</div>
-      <div v-if="mMoreInfo_Dx" class="mMoreInfo">大小：{{ mMoreInfo_Dx }}</div>
-      <div v-if="mMoreInfo_Rq" class="mMoreInfo">上架时间：{{ mMoreInfo_Rq }}</div>
-      <div v-if="mMoreInfo_Cbs" class="mMoreInfo">出版社：{{ mMoreInfo_Cbs }}</div>
-      <div v-if="mMoreInfo_Sh" class="mMoreInfo">书号：{{ mMoreInfo_Sh }}</div>
-      <div v-if="mMoreInfo_Mz" class="mMoreInfo">免责声明：{{ mMoreInfo_Mz }}</div>
-    </div>
     <div class="mBookNav">
       <div @click="mBookShelf" class="mBookNavL">加入书架</div>
       <router-link to="/article?id=1&chapter=1" class="mBookNavR">免费试读</router-link>
@@ -58,108 +49,12 @@ import test from './../assets/images/mImg_1.jpg'
 export default {
   data () {
     return {
-	  dataInfo:[],
-	  dataDetail:[],
-	  chapterInfo:[],
-	  bookRecommendData:[],
-	  bookRecommend:[],
-      mMoreInfo_Zs: '12.1万字',
-      mMoreInfo_Dx: '14.01MB',
-      mMoreInfo_Rq: '2018-03-21',
-      mMoreInfo_Cbs: '湖南文艺出版社',
-      mMoreInfo_Sh: '0299393902020202',
-      mMoreInfo_Mz: '本书数字版权由“博集新媒”提供，并由其授权中华股份科技有限公司制作发行，若书中含有不良信息，请书友积极告知客服。',
+      dataInfo:[],
+      dataDetail:[],
+      chapterInfo:[],
+      bookRecommendData:[],
+      bookRecommend:[],
       mSideNav: '',
-      Book: [{
-        href: '/book',
-        title: '我所有的朋友都死了1',
-        introduce: '世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多世界上有趣的事太多',
-        author: '洛城东',
-        info: '肌肤天卷｜大半',
-        rate: '129393',
-        star: '40',
-        leaves: '1100',
-        img: test
-      }],
-      BookList: [{
-        href: '/article?id=1&chapter=1',
-        title: '版权信息',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=2',
-        title: '楔子',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=3',
-        title: '第一章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=4',
-        title: '第二章 你的甜蜜',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=5',
-        title: '第三章 你的厄劫',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=6',
-        title: '第四章 时光如初',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=7',
-        title: '第五章 若是分离',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=8',
-        title: '第六章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=9',
-        title: '第七章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=10',
-        title: '第八章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=11',
-        title: '第九章 你的甜蜜',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=12',
-        title: '第十章 你的厄劫'
-      }, {
-        href: '/article?id=1&chapter=13',
-        title: '第十一章 时光如初'
-      }, {
-        href: '/article?id=1&chapter=14',
-        title: '第十二章 若是分离'
-      }],
-      Relevant: [{
-        href: '/book',
-        title: '我所有的朋友都死了1',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了2',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了3',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了4',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了5',
-        img: test
-      }, {
-        href: '/book',
-        title: '我所有的朋友都死了6',
-        img: test
-      }]
     }
   },
   methods: {
@@ -174,7 +69,7 @@ export default {
       // 加入书架
     },
 	getbookrecommend: function () {
-		this.$http.get("/wap/book/bookRecommend",{params:{book_id:this.$route.query.bookid}}).then(function(res){
+		this.$http.get("/wap/book/bookRecommend",{params:{book_id:this.$route.query.book_id}}).then(function(res){
 			this.bookRecommendData  = res.data
 			this.bookRecommend 	= this.bookRecommendData.data		
 		},function(res){  
@@ -182,8 +77,8 @@ export default {
 		})
 	},
 	getbookinfo: function () {
-		this.$http.get("/wap/book",{params:{book_id:this.$route.query.bookid}}).then(function(res){
-			this.dataInfo  	= res.data777
+		this.$http.get("/wap/book",{params:{book_id:this.$route.query.book_id}}).then(function(res){
+			this.dataInfo  	= res.data
 			this.dataDetail 	= this.dataInfo.data
 			this.chapterInfo 	= this.dataDetail.books.chapter_info			
 		},function(res){  
@@ -193,8 +88,8 @@ export default {
   },
   mounted: function () {
     this.parameter()
-	this.getbookinfo()
-	this.getbookrecommend()	
+    this.getbookinfo()
+    this.getbookrecommend()	
   }
 }
 </script>
