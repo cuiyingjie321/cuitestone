@@ -87,7 +87,7 @@ export default {
     }
   // 缺少同类书籍推荐
   },
-  mounted: function () {
+  created: function () {
     this.parameter()
     this.getsearchhistory()
   }

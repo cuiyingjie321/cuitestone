@@ -101,7 +101,7 @@ export default {
       this.$emit('mParameter', {'mType': '3', 'mName': this.mName, 'mStyle': 'true'})
     }
   },
-  mounted: function () {
+  created: function () {
     this.parameter()
   }
 }

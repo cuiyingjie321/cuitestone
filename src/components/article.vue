@@ -252,9 +252,6 @@ export default {
     }
   },
   mounted: function () {
-    this.parameter()
-    this.getchaptercontent()
-    this.getbookinfo()
     this.dragWidth = (document.getElementById('main').offsetWidth / 750) * (6.466667 * 75)
   },
   filters: {
@@ -264,6 +261,11 @@ export default {
       // num.toFixed(2)获取的是字符串
       return Number(realVal)
     }
+  },
+  created: function () {
+    this.parameter()
+    this.getchaptercontent()
+    this.getbookinfo()
   }
 }
 </script>

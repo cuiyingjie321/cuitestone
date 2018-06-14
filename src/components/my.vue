@@ -51,7 +51,7 @@ export default {
       this.$emit('mParameter', {'mType': '2', 'mNav': 'true', 'mIndex': '3', 'mStyle': 'true'})
     }
   },
-  mounted: function () {
+  created: function () {
     this.parameter()
   }
 }
