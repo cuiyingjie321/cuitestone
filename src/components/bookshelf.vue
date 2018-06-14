@@ -4,14 +4,14 @@
       <div class="mModule mModule_N">
         <h3 class="mModuleTi">我的书架</h3>
         <ul class="mModuleList">
-          <li v-for="list in MyBookShelf.data.books" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
+          <li v-for="list in MyBookShelf" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
         </ul>
         <div v-if="!MyBookShelf" class="mModuleNull">还没有阅读，快去阅读吧~</div>
       </div>
       <div class="mModule">
         <h3 class="mModuleTi">相关推荐</h3>
         <ul class="mModuleList">
-          <li v-for="list in Relevant.data.books" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
+          <li v-for="list in Relevant" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
         </ul>
       </div>
     </section>
@@ -32,7 +32,7 @@ export default {
     },
     getbooklist: function () {
       this.$http.get('/wap', {}).then(function (res) {
-        this.MyBookShelf = res.data
+        this.MyBookShelf = res.data.data.books
       },
       function (res) {
         alert(res.status)
@@ -40,7 +40,7 @@ export default {
     },
     getbookRecommend: function () {
       this.$http.get('/wap/index/bookRecommend', {}).then(function (res) {
-        this.Relevant = res.data
+        this.Relevant = res.data.data.books
       },
       function (res) {
         alert(res.status)
