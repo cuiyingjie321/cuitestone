@@ -36,11 +36,11 @@
     </div>
     <div v-if="mPagingBar && !mAticleSetup && mAticleNav" class="mPagingInfo">
       <div class="mPagingInfo_L">
-        <div>{{ BookList[nowNum].title }}{{ nowNum }}</div>
-        <div>全书{{ nowNum+1 }}/{{ BookList.length }}页，位置{{ mPercent | mPercentFilter }}%</div>
+        <div>{{ chapters[nowNum].title }}</div>
+        <div>全书{{ nowNum+1 }}/{{ chapterInfo.chapter_count }}页，位置{{ mPercent | mPercentFilter }}%</div>
       </div>
       <div class="mPagingInfo_Icon"></div>
-      <router-link :to="BookList[nowNum].href" class="mPagingInfo_Icon" @click="mPagingInfo_Icon"><img src="./../assets/images/mArticleIcon_6.png"/></router-link>
+      <router-link :to="'/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + chapters[nowNum].chapter_id" class="mPagingInfo_Icon" @click="mPagingInfo_Icon"><img src="./../assets/images/mArticleIcon_6.png"/></router-link>
     </div>
     <div v-if="!mAticleSetup && mAticleNav" class="mPaging">
       <span>上一章</span>
@@ -61,9 +61,9 @@
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
     <div v-if="mSideNav" class="mSideNav">
-      <div class="mSideNav_Ti">连载 本书共{{ BookList.length-1 }}章</div>
+      <div class="mSideNav_Ti">连载 本书共{{ chapterInfo.chapter_count }}章</div>
       <div class="mSideNav_List">
-        <router-link v-for="list in BookList" :key="list.id" :to="list.href">{{ list.title }}<span v-if="list.free">免费</span></router-link>
+        <router-link v-for="list in chapters" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if="list.free < 1">免费</span></router-link>
       </div>
     </div>
   </div>
@@ -87,60 +87,8 @@ export default {
       mDayStyle: '',
       mPercent: '',
       mChaptercontent: [],
-      BookList: [{
-        href: '/article?id=1&chapter=1',
-        title: '版权信息',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=2',
-        title: '楔子',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=3',
-        title: '第一章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=4',
-        title: '第二章 你的甜蜜',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=5',
-        title: '第三章 你的厄劫',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=6',
-        title: '第四章 时光如初',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=7',
-        title: '第五章 若是分离',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=8',
-        title: '第六章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=9',
-        title: '第七章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=10',
-        title: '第八章 唯若初见',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=11',
-        title: '第九章 你的甜蜜',
-        free: 'true'
-      }, {
-        href: '/article?id=1&chapter=12',
-        title: '第十章 你的厄劫'
-      }, {
-        href: '/article?id=1&chapter=13',
-        title: '第十一章 时光如初'
-      }, {
-        href: '/article?id=1&chapter=14',
-        title: '第十二章 若是分离'
-      }],
+      chapterInfo: [],
+      chapters: [],
       mASetup_Style: ['mStyle_0', 'mStyle_1', 'mStyle_2', 'mStyle_3', 'mStyle_4', 'mStyle_5'],
       mASetup_Type: ['仿真', '覆盖', '滑动', '无'],
       pos: {}, // 上一章下一章开始
@@ -257,14 +205,14 @@ export default {
       this.mPagingBar = true
     },
     countNum: function (num) {
-      var len = this.BookList.length - 1 - this.startNum
+      var len = this.chapterInfo.chapter_count - 1 - this.startNum
       var scale = Math.ceil(this.dragWidth / len)
       this.nowNum = parseInt(this.startNum) + Math.ceil(num / scale)
       // 预防当前位置超过数组范围
       if (this.nowNum < 0) {
         this.nowNum = 0
-      } else if (this.nowNum >= this.BookList.length - 1) {
-        this.nowNum = this.BookList.length - 1
+      } else if (this.nowNum >= this.chapterInfo.chapter_count - 1) {
+        this.nowNum = this.chapterInfo.chapter_count - 1
       }
       this.mPercent = this.distance / this.dragWidth * 100
     },
@@ -296,6 +244,7 @@ export default {
         this.dataInfo = res.data
         this.dataDetail = this.dataInfo.data
         this.chapterInfo = this.dataDetail.books.chapter_info
+        this.chapters = this.chapterInfo.chapters
       },
       function (res) {
         alert(res.status)
@@ -305,6 +254,7 @@ export default {
   mounted: function () {
     this.parameter()
     this.getchaptercontent()
+    this.getbookinfo()
     this.dragWidth = (document.getElementById('main').offsetWidth / 750) * (6.466667 * 75)
   },
   filters: {
