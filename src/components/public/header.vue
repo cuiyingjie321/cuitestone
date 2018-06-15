@@ -1,5 +1,5 @@
 <template>
-  <header :class="['mHeader_w', { mHeaderc_w: mType == 4 }]">
+  <header :class="['mHeader_w', { mHeaderc_w: mType == 4, mHeaderc_w: mHeaderFixed }]">
     <div v-if="mType == 0" class="mHeader">
       <div class="mHeader_Ti">{{mTitle}}</div>
       <router-link to="/search" class="mHeader_Search">搜索</router-link>
@@ -23,7 +23,7 @@ export default {
       mKeyword: ''
     }
   },
-  props: ['mType', 'mTitle'],
+  props: ['mType', 'mTitle', 'mHeaderFixed'],
   methods: {
     back: function () {
       this.$router.go(-1)
@@ -36,7 +36,7 @@ export default {
 </script>
 
 <style scoped>
-.mHeader_w{width:10rem;height:1.133333rem;margin-left:auto;margin-right:auto;z-index:1;display:flex;flex-direction:column;box-sizing:border-box;}
+.mHeader_w{width:10rem;height:1.133333rem;margin-left:auto;margin-right:auto;display:flex;flex-direction:column;box-sizing:border-box;z-index:2;}
 .mHeader{width:10rem;height:1.133333rem;background-color:#42c079;position:relative;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
 .mHeader_Ti{width:6.133333rem;line-height:1.133333rem;font-size:0.48rem;color:#fff;margin-left:auto;margin-right:auto;display:flex;justify-content:center;overflow:hidden;}
 .mHeader_Search{width:0.533333rem;height:0.533333rem;position:absolute;top:50%;right:0.4rem;margin-top:-0.266665rem;text-indent:-1000em;background:url(./../../assets/images/mIcon_1.png) no-repeat 0 0;background-size:0.533333rem 0.533333rem;display:block;overflow:hidden;}

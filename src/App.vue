@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <m-header v-if="!mHeaderHide" :mType="mType" :mTitle="mName" @mKeywordReceive="mKeywordReceive"></m-header>
+    <m-header v-if="!mHeaderHide" :mType="mType" :mTitle="mName" :mHeaderFixed="mHeaderFixed" @mKeywordReceive="mKeywordReceive"></m-header>
     <router-view @mParameter="mParameters" :mKeyword="mKeyword"></router-view>
     <m-nav v-if="mNav" :mIndex="mIndex"></m-nav>
   </div>
 </template>
 
 <script>
-// mType header区域类型,mHeader 是否显示header,mNav 是否显示底部导航,mIndex 底部导航索引(预防刷新导航失去索引),mStyle 我的 相关页面背景色,mName 标题名字(如果页面没有设置则用路由设置的名字),mKeyword 搜索关键词传值,mASetup_Style 文章页的颜色设置,mDay 文章页白天还是黑夜场景
+// mType header区域类型,mHeader 是否显示header,mNav 是否显示底部导航,mIndex 底部导航索引(预防刷新导航失去索引),mStyle 我的 相关页面背景色,mName 标题名字(如果页面没有设置则用路由设置的名字),mKeyword 搜索关键词传值,mASetup_Style 文章页的颜色设置,mDay 文章页白天还是黑夜场景,mHeaderFixed header是否position:fixed;
 export default {
   data () {
     return {
       mType: '0',
       mHeaderHide: '',
+      mHeaderFixed: false,
       mNav: 'true',
       mIndex: '0',
       mStyle: '',
@@ -27,6 +28,7 @@ export default {
       this.mType = msg.mType
       this.mNav = msg.mNav
       this.mHeaderHide = msg.mHeaderHide
+      this.mHeaderFixed = msg.mHeaderFixed
       this.mIndex = msg.mIndex
       this.mStyle = msg.mStyle
       this.mName = msg.mName
