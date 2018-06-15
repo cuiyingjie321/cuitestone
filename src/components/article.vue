@@ -37,7 +37,7 @@
     <div v-if="mPagingBar && !mAticleSetup && mAticleNav" class="mPagingInfo">
       <div class="mPagingInfo_L">
         <div>{{ chapters[nowNum].title }}</div>
-        <div>全书{{ nowNum+1 }}/{{ chapterInfo.chapter_count }}页，位置{{ mPercent | mPercentFilter }}%</div>
+        <div>全书{{ nowNum+1 }}/{{ chapter_count }}页，位置{{ mPercent | mPercentFilter }}%</div>
       </div>
       <div class="mPagingInfo_Icon"></div>
       <router-link :to="'/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + chapters[nowNum].chapter_id" class="mPagingInfo_Icon" @click="mPagingInfo_Icon"><img src="./../assets/images/mArticleIcon_6.png"/></router-link>
@@ -61,9 +61,9 @@
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
     <div v-if="mSideNav" class="mSideNav">
-      <div class="mSideNav_Ti">连载 本书共{{ chapterInfo.chapter_count }}章</div>
+      <div class="mSideNav_Ti">连载 本书共{{ chapter_count }}章</div>
       <div class="mSideNav_List">
-        <router-link v-for="list in chapters" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if="list.free < 1">免费</span></router-link>
+        <router-link v-for="list in chapters" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if="list.free === 1">免费</span></router-link>
       </div>
     </div>
   </div>
@@ -84,7 +84,6 @@ export default {
       mAticleNav: '',
       mHeaderHide: 'true',
       mDayTitle: '日间',
-      mDayStyle: '',
       mPercent: '',
       mChaptercontent: [],
       chapterInfo: [],
@@ -98,7 +97,6 @@ export default {
       endDistance: 0, // 上次操作结束位置
       transTime: 0.3, // 点击拖动动画
       dragWidth: 0, // 进度条宽度
-      startNum: 0,
       nowNum: 0,
       PagingStartX: 0,
       PagingEndX: 0
@@ -205,14 +203,14 @@ export default {
       this.mPagingBar = true
     },
     countNum: function (num) {
-      var len = this.chapterInfo.chapter_count - 1 - this.startNum
+      var len = this.chapter_count - 1
       var scale = Math.ceil(this.dragWidth / len)
-      this.nowNum = parseInt(this.startNum) + Math.ceil(num / scale)
+      this.nowNum = Math.ceil(num / scale)
       // 预防当前位置超过数组范围
       if (this.nowNum < 0) {
         this.nowNum = 0
-      } else if (this.nowNum >= this.chapterInfo.chapter_count - 1) {
-        this.nowNum = this.chapterInfo.chapter_count - 1
+      } else if (this.nowNum >= this.chapter_count - 1) {
+        this.nowNum = this.chapter_count - 1
       }
       this.mPercent = this.distance / this.dragWidth * 100
     },
@@ -239,12 +237,11 @@ export default {
         alert(res.status)
       })
     },
-    getbookinfo: function () {
-      this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
-        this.dataInfo = res.data
-        this.dataDetail = this.dataInfo.data
-        this.chapterInfo = this.dataDetail.books.chapter_info
-        this.chapters = this.chapterInfo.chapters
+    getcatalogInfo: function () {
+      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.dataCatalog = res.data.data
+        this.chapter_count = this.dataCatalog.chapter_count
+        this.chapters = this.dataCatalog.chapters
       },
       function (res) {
         alert(res.status)
@@ -265,7 +262,7 @@ export default {
   created: function () {
     this.parameter()
     this.getchaptercontent()
-    this.getbookinfo()
+    this.getcatalogInfo()
   }
 }
 </script>

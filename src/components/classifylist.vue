@@ -30,7 +30,7 @@ export default {
       this.$emit('mParameter', {'mType': '3', 'mHeaderFixed': true})
     },
     getbooklist: function () {
-      this.$http.get('/wap/store/categoryInfo', {'pages': this.pages}).then(function (res) {
+      this.$http.get('/wap/store/categoryInfo', {'params': {'pages': this.pages}}).then(function (res) {
         this.dataInfo = res.data
         this.bookList.push(this.dataInfo.data)
       },
