@@ -3,25 +3,25 @@
     <div>
       <ul class="mModuleLista mModuleLista_1">
         <li>
-          <div class="mModuleaL"><img :src="dataDetail.books.info.cover_img" :alt="dataDetail.books.info.name"/></div>
+          <div class="mModuleaL"><img :src="dataDetail.cover_img" :alt="dataDetail.name"/></div>
           <div class="mModuleaR">
-            <div class="mModuleaR_Ti">{{ dataDetail.books.info.name }}</div>
-            <div class="mModuleaR_Info">{{ dataDetail.books.info.author }}</div>
+            <div class="mModuleaR_Ti">{{ dataDetail.name }}</div>
+            <div class="mModuleaR_Info">{{ dataDetail.author }}</div>
             <div class="mModuleaR_Rate">
-              <div class="mStar"><div :style="'width:'+dataDetail.books.info.read_num +'%'"></div></div>{{ dataDetail.books.info.read_num }}人阅读
+              <div class="mStar"><div :style="'width:'+dataDetail.read_num +'%'"></div></div>{{ dataDetail.read_num }}人阅读
             </div>
-            <div class="mModuleaR_Leaves">{{ dataDetail.books.info.user_money }}</div>
+            <div class="mModuleaR_Leaves">{{ dataDetail.user_money }}</div>
           </div>
         </li>
       </ul>
-      <div class="mIntroduce">{{ dataDetail.books.info.desc }}</div>
+      <div class="mIntroduce">{{ dataDetail.desc }}</div>
     </div>
     <div class="mModuleb">
       <div class="mSeeTi">查看目录：{{ chapterInfo.chapter_count }}章</div>
       <div class="mSeeTe">
-        <router-link v-for="list in chapterInfo.chapters.slice(0,7)" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if ="list.free < 1">免费</span></router-link>
+        <router-link v-for="list in chapterInfo.chapters.slice(0,7)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if ="list.free == 1">免费</span></router-link>
       </div>
-      <div v-if="chapterInfo.chapters.length > 7" class="mSeeBtn" @click="mSideBtn">查看更多章节 ></div>
+      <div v-if="catalogInfoDetail.chapters.length > 7" class="mSeeBtn" @click="mSideBtn">查看更多章节 ></div>
     </div>
     <div class="mModule">
       <h3 class="mModuleTi">喜欢这本书的人也喜欢<router-link to="/classifylist?id=1">查看更多 &gt;</router-link></h3>
@@ -31,13 +31,13 @@
     </div>
     <div class="mBookNav">
       <div @click="mBookShelf" class="mBookNavL">加入书架</div>
-      <router-link to="/article?id=1&chapter=1" class="mBookNavR">免费试读</router-link>
+      <router-link v-for="list in chapterInfo.chapters.slice(0,1)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id" class="mBookNavR">免费试读</router-link>
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
     <div v-if="mSideNav" class="mSideNav">
       <div class="mSideNav_Ti">连载 本书共{{ chapterInfo.chapter_count }}章</div>
       <div class="mSideNav_List">
-        <router-link v-for="list in  chapterInfo.chapters" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if="list.free < 1">免费</span></router-link>
+        <router-link v-for="list in  catalogInfoDetail.chapters" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if="list.free == 1">免费</span></router-link>
       </div>
     </div>
   </div>
@@ -50,6 +50,8 @@ export default {
     return {
       dataInfo: [],
       dataDetail: [],
+      catalogInfo: [],
+      catalogInfoDetail: [],
       chapterInfo: [],
       bookRecommendData: [],
       bookRecommend: [],
@@ -79,8 +81,17 @@ export default {
     getbookinfo: function () {
       this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
         this.dataInfo = res.data
-        this.dataDetail = this.dataInfo.data
-        this.chapterInfo = this.dataDetail.books.chapter_info
+        this.dataDetail = this.dataInfo.data.books.info
+        this.chapterInfo = this.dataInfo.data.books.chapter_info
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    getbookcataloginfo: function () {
+      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+        this.catalogInfo = res.data
+        this.catalogInfoDetail = this.catalogInfo.data  
       },
       function (res) {
         alert(res.status)
@@ -91,6 +102,8 @@ export default {
     this.parameter()
     this.getbookinfo()
     this.getbookrecommend()
+    this.getbookcataloginfo()
+     
   }
 }
 </script>
