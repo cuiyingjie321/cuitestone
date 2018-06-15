@@ -21,14 +21,14 @@ module.exports = {
 		'/wap/*': {
 			target: 'http://wenxue.china.com',
 			changeOrigin:true,
-		},	
-		/*'/bookRecommend': {
-			target: 'http://wenxue.china.com',
+		},
+    '/MP_verify_lrpI7pAkRnpL6XVm.txt': {
+			target: 'http://cui.natapp1.cc',
 			changeOrigin:true,
 			pathRewrite: {
-			  '^/bookRecommend': '/wap/index/bookRecommend'
-			}
-		}*/	
+			  '^/MP_verify_lrpI7pAkRnpL6XVm.txt': '/static/MP_verify_lrpI7pAkRnpL6XVm.txt'
+      }
+		}
 	},
 
     // Various Dev Server settings

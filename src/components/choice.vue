@@ -66,7 +66,7 @@ export default {
       dataInfoFirst: [],
       dataInfoSecond: [],
       dataInfoThird: [],
-      dataInfoFourth: [],  
+      dataInfoFourth: [],
       dataInfoHead: [],
       dataInfoBookList: [],
       dataInfoChannelA: [],
@@ -76,7 +76,7 @@ export default {
       dataInfoThirdChannel: [],
       dataInfoFirstChannelData: [],
       dataInfoSecondChannelData: [],
-      dataInfoThirdChannelData: []  
+      dataInfoThirdChannelData: []
     }
   },
   methods: {
@@ -100,7 +100,7 @@ export default {
         this.dataInfoThirdChannel = this.dataInfo.third_channel
         this.dataInfoFirstChannelData = this.dataInfo.first_channel.first_channel_data
         this.dataInfoSecondChannelData = this.dataInfo.second_channel.second_channel_data
-        this.dataInfoThirdChannelData = this.dataInfo.third_channel.second_channel_data   
+        this.dataInfoThirdChannelData = this.dataInfo.third_channel.second_channel_data
       },
       function (res) {
         alert(res.status)
