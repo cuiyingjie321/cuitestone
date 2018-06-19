@@ -1,7 +1,8 @@
 <template>
   <div id="main" class="main">
     <div @touchstart="PagingStart($event)" @touchend="PagingEnd($event)" class="mAticle" :style="'font-size:' + ( mASetup_Font / 75 ) +'rem'" @click="mAticleBtn">
-      <p v-for="list in mChaptercontent" :key="list">{{ list }}</p>
+      <p v-if="mChaptercontent" v-for="list in mChaptercontent" :key="list.id">{{ list }}</p>
+      <div v-if="!mChaptercontent" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </div>
     <div v-if="mAticleSetup && mAticleNav" class="mASetup">
       <!-- 事件暂时调用的是章节进度条 <div class="mASetup_Bright">
@@ -34,16 +35,16 @@
         <div v-for="(list , index) in mASetup_Type" :key="list.id" :class="{ hov:mASetup_Type_Index == index}" @click="mASetup_Type_Btn(index)">{{ list }}</div>
       </div> -->
     </div>
-    <div v-if="mPagingBar && !mAticleSetup && mAticleNav" class="mPagingInfo">
+    <div v-if="!mAticleSetup && mAticleNav" class="mPagingInfo">
       <div class="mPagingInfo_L">
         <div>{{ chapters[nowNum].title }}</div>
         <div>全书{{ nowNum+1 }}/{{ chapter_count }}页，位置{{ mPercent | mPercentFilter }}%</div>
       </div>
       <div class="mPagingInfo_Icon"></div>
-      <router-link :to="'/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + chapters[nowNum].chapter_id" class="mPagingInfo_Icon" @click="mPagingInfo_Icon"><img src="./../assets/images/mArticleIcon_6.png"/></router-link>
+      <div class="mPagingInfo_Icon" @click="mPagingInfo_Icon"><img src="./../assets/images/mArticleIcon_6.png"/></div>
     </div>
     <div v-if="!mAticleSetup && mAticleNav" class="mPaging">
-      <span>上一章</span>
+      <span @click="mPrev">上一章</span>
       <div class="dragbox" @touchmove="timeMove($event)" @touchleave="timeEnd($event)">
         <div class="progress" @click="timeClick($event)">
           <div class="progressbar" :style="{width:mPercent +'%',transition:'width '+transTime+'s'}">
@@ -52,7 +53,7 @@
         <div class="bardrag" @touchstart="timeDown($event)" @touchend="timeEnd($event)" :style="{left:mPercent +'%'}">
         </div>
       </div>
-      <span>下一章</span>
+      <span @click="mNext">下一章</span>
     </div>
     <div id="mAticleNav" v-if="mAticleNav" class="mAticleNav">
       <div @click="mSideBtn"><span></span><p>目录</p></div>
@@ -70,23 +71,20 @@
 </template>
 
 <script>
-// mBookName 书籍名称,mSideNav 是否显示侧导航,mPagingBar 进度条,mAticleSetup 底部导航设置,BookList 书籍目录,mASetup_Style_Index 颜色选择默认索引,mASetup_Type_Index 翻页模式默认索引,mASetup_Font 默认字号,mAticleNav 底部导航是否显示,mHeaderHide header是否显示,mDayTitle 白天还是黑夜场景
+// mSideNav 是否显示侧导航,mPagingBar 进度条,mAticleSetup 底部导航设置,BookList 书籍目录,mASetup_Style_Index 颜色选择默认索引,mASetup_Type_Index 翻页模式默认索引,mASetup_Font 默认字号,mAticleNav 底部导航是否显示,mHeaderHide header是否显示,mDayTitle 白天还是黑夜场景
 export default {
   data () {
     return {
-      mBookName: '',
       mSideNav: '',
-      mPagingBar: '',
-      mAticleSetup: 'true',
+      mPagingBar: false,
+      mAticleSetup: true,
       mASetup_Style_Index: '0',
       mASetup_Type_Index: '0',
       mASetup_Font: '32',
       mAticleNav: '',
-      mHeaderHide: 'true',
       mDayTitle: '日间',
       mPercent: '',
       mChaptercontent: [],
-      chapterInfo: [],
       chapters: [],
       mASetup_Style: ['mStyle_0', 'mStyle_1', 'mStyle_2', 'mStyle_3', 'mStyle_4', 'mStyle_5'],
       mASetup_Type: ['仿真', '覆盖', '滑动', '无'],
@@ -99,12 +97,13 @@ export default {
       dragWidth: 0, // 进度条宽度
       nowNum: 0,
       PagingStartX: 0,
-      PagingEndX: 0
+      PagingEndX: 0,
+      mPaging: 0 // url更新时请求数据
     }
   },
   methods: {
     parameter: function () {
-      this.$emit('mParameter', {'mType': '4', 'mHeaderHide': this.mHeaderHide, 'mName': this.mBookName, 'mASetup_Style': this.mASetup_Style[this.mASetup_Style_Index], 'mDay': this.DayStyle})
+      this.$emit('mParameter', {'mType': '4', 'mHeaderHide': !this.mAticleNav, 'mName': this.mBookName, 'mASetup_Style': this.mASetup_Style[this.mASetup_Style_Index], 'mDay': this.DayStyle, 'mHeaderFixed': this.mAticleNav})
     },
     mSideBtn: function () {
       // 侧导航展开关闭
@@ -126,16 +125,13 @@ export default {
     mAticleBtn: function () {
       // 显示导航
       this.mAticleNav = !this.mAticleNav
-      this.mHeaderHide = !this.mHeaderHide
-      this.mPagingBar = ''
-      this.mAticleSetup = ''
+      this.mPagingBar = false
+      this.mAticleSetup = false
       this.parameter()
     },
     mPagingInfo_Icon: function () {
       // 章节跳转按钮后隐藏导航
-      this.mAticleNav = ''
-      this.mHeaderHide = ''
-      this.mPagingBar = ''
+      this.mPaging = this.chapters[this.nowNum].chapter_id
     },
     mASetup_Font_Add: function () {
       // 字号加
@@ -203,16 +199,26 @@ export default {
       this.mPagingBar = true
     },
     countNum: function (num) {
-      var len = this.chapter_count - 1
-      var scale = Math.ceil(this.dragWidth / len)
-      this.nowNum = Math.ceil(num / scale)
+      var len = this.chapter_count
+      var scale = this.dragWidth / len
+      this.nowNum = parseInt(num / scale)
       // 预防当前位置超过数组范围
       if (this.nowNum < 0) {
         this.nowNum = 0
       } else if (this.nowNum >= this.chapter_count - 1) {
         this.nowNum = this.chapter_count - 1
       }
-      this.mPercent = this.distance / this.dragWidth * 100
+      this.mPercent = num / this.dragWidth * 100
+    },
+    mPrev: function (e) {
+      // 上一章
+      this.nowNum = this.nowNum - 1
+      this.mPaging = this.chapters[this.nowNum].chapter_id
+    },
+    mNext: function (e) {
+      // 下一章
+      this.nowNum = this.nowNum + 1
+      this.mPaging = this.chapters[this.nowNum].chapter_id
     },
     PagingStart: function (e) {
       // 书籍翻页开始碰触
@@ -229,6 +235,7 @@ export default {
       }
     },
     getchaptercontent: function () {
+      this.mChaptercontent = false
       this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id}}).then(function (res) {
         this.mBookName = res.data.data.title
         this.mChaptercontent = res.data.data.content.split('\n')
@@ -242,6 +249,12 @@ export default {
         this.dataCatalog = res.data.data
         this.chapter_count = this.dataCatalog.chapter_count
         this.chapters = this.dataCatalog.chapters
+        for (var i in this.chapters) {
+          if (parseInt(this.chapters[i].chapter_id) === parseInt(this.$route.query.chapter_id)) {
+            this.distance = i * (this.dragWidth / this.chapter_count)
+            this.countNum(this.distance)
+          }
+        }
       },
       function (res) {
         alert(res.status)
@@ -249,7 +262,7 @@ export default {
     }
   },
   mounted: function () {
-    this.dragWidth = (document.getElementById('main').offsetWidth / 750) * (6.466667 * 75)
+    this.dragWidth = parseInt((document.getElementById('main').offsetWidth / 750) * (6.466667 * 75))
   },
   filters: {
     mPercentFilter (value) {
@@ -263,6 +276,15 @@ export default {
     this.parameter()
     this.getchaptercontent()
     this.getcatalogInfo()
+  },
+  watch: {
+    mPaging: function (val) {
+      this.mAticleNav = false
+      this.mPagingBar = false
+      this.$router.push('/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + val)
+      this.getchaptercontent()
+      this.parameter()
+    }
   }
 }
 </script>
@@ -316,6 +338,7 @@ export default {
 .progressbar{width:0;height:0.066667rem;background-color:#56cd8a;font-size:0;line-height:0;}
 .bardrag{width:0.32rem;height:0.32rem;background-color:#454545;border:2px solid #56cd8a;border-radius:50%;position:absolute;top:50%;left:0;margin-top:-0.16rem;margin-left:-0.16rem;display:block;overflow:hidden;box-sizing:border-box;}
 .mASetup_BrightL_Bar{width:6.066667rem;margin-right:0.4rem;}
+.mLoad{width:1rem;height:1rem;position:fixed;top:50%;;left:50%;margin-top:-0.5rem;margin-left:-0.5rem;}
 @-webkit-keyframes mSideNavR{
 0%{opacity:0;-webkit-transform:translate(-14rem,0);}
 100%{opacity:1;-webkit-transform:translate(0,0);}

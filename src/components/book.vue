@@ -91,7 +91,7 @@ export default {
     getbookcataloginfo: function () {
       this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
         this.catalogInfo = res.data
-        this.catalogInfoDetail = this.catalogInfo.data  
+        this.catalogInfoDetail = this.catalogInfo.data
       },
       function (res) {
         alert(res.status)
@@ -103,7 +103,6 @@ export default {
     this.getbookinfo()
     this.getbookrecommend()
     this.getbookcataloginfo()
-     
   }
 }
 </script>
