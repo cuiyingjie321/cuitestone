@@ -35,6 +35,7 @@
         <div v-for="(list , index) in mASetup_Type" :key="list.id" :class="{ hov:mASetup_Type_Index == index}" @click="mASetup_Type_Btn(index)">{{ list }}</div>
       </div> -->
     </div>
+    <!-- v-if="mPagingBar && !mAticleSetup && mAticleNav" -->
     <div v-if="!mAticleSetup && mAticleNav" class="mPagingInfo">
       <div class="mPagingInfo_L">
         <div>{{ chapters[nowNum].title }}</div>
@@ -61,22 +62,22 @@
       <div @click="mASetupBtn"><span :class="{ hov:mAticleSetup}"></span><p :class="{ hov:mAticleSetup}">设置</p></div>
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
-    <div v-if="mSideNav" class="mSideNav">
-      <div class="mSideNav_Ti">连载 本书共{{ chapter_count }}章</div>
-      <div class="mSideNav_List">
-        <router-link v-for="list in chapters" :key="list.id" :to="'/article?id=1&chapter='+list.chapter_id">{{ list.title }}<span v-if="list.free === 1">免费</span></router-link>
+    <div :class="['mSideNav', { 'mSideNav_hov': mSideNav}]">
+      <div id="mSideNav_List" class="mSideNav_List">
+        <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ chapter_count }}章</div>
+        <div v-for="(list , index)  in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 1">免费</span></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// mSideNav 是否显示侧导航,mPagingBar 进度条,mAticleSetup 底部导航设置,BookList 书籍目录,mASetup_Style_Index 颜色选择默认索引,mASetup_Type_Index 翻页模式默认索引,mASetup_Font 默认字号,mAticleNav 底部导航是否显示,mHeaderHide header是否显示,mDayTitle 白天还是黑夜场景
+// mSideNav 是否显示侧导航,mPagingBar 进度条,mAticleSetup 底部导航设置,BookList 书籍目录,mASetup_Style_Index 颜色选择默认索引,mASetup_Type_Index 翻页模式默认索引,mASetup_Font 默认字号,mAticleNav 底部导航是否显示,mHeaderHide header是否显示,mDayTitle 白天还是黑夜场景,mBookState 连载还是完结
 export default {
   data () {
     return {
       mSideNav: '',
-      mPagingBar: false,
+      // mPagingBar: false,
       mAticleSetup: true,
       mASetup_Style_Index: '0',
       mASetup_Type_Index: '0',
@@ -98,7 +99,10 @@ export default {
       nowNum: 0,
       PagingStartX: 0,
       PagingEndX: 0,
-      mPaging: 0 // url更新时请求数据
+      mPaging: 0, // url更新时请求数据
+      chapter_count: 0,
+      mBookState: '',
+      mBookPosition: 0 // 当前章节在数组中的位置
     }
   },
   methods: {
@@ -108,6 +112,10 @@ export default {
     mSideBtn: function () {
       // 侧导航展开关闭
       this.mSideNav = !this.mSideNav
+      // 计算侧边栏打开时位置
+      if (this.mSideNav) {
+        document.getElementById('mSideNav_List').scrollTop = parseInt(this.mRatio * ((this.mBookPosition * 1.133333) * 75))
+      }
     },
     mASetupBtn: function () {
       // 设置展开关闭
@@ -125,9 +133,14 @@ export default {
     mAticleBtn: function () {
       // 显示导航
       this.mAticleNav = !this.mAticleNav
-      this.mPagingBar = false
+      // this.mPagingBar = false
       this.mAticleSetup = false
       this.parameter()
+      // 重新打开章节进度条时复位到当前章节位置
+      if (this.mAticleNav) {
+        this.distance = this.mBookPosition * (this.dragWidth / this.chapter_count)
+        this.countNum(this.distance)
+      }
     },
     mPagingInfo_Icon: function () {
       // 章节跳转按钮后隐藏导航
@@ -184,7 +197,7 @@ export default {
         this.distance = this.endDistance + moveX
       }
       this.countNum(this.distance)
-      this.mPagingBar = true
+      // this.mPagingBar = true
     },
     timeEnd: function (e) {
       this.transTime = 0.3
@@ -196,7 +209,7 @@ export default {
       var moveX = x - this.distance
       this.distance += moveX
       this.countNum(this.distance)
-      this.mPagingBar = true
+      // this.mPagingBar = true
     },
     countNum: function (num) {
       var len = this.chapter_count
@@ -210,12 +223,12 @@ export default {
       }
       this.mPercent = num / this.dragWidth * 100
     },
-    mPrev: function (e) {
+    mPrev: function () {
       // 上一章
       this.nowNum = this.nowNum - 1
       this.mPaging = this.chapters[this.nowNum].chapter_id
     },
-    mNext: function (e) {
+    mNext: function () {
       // 下一章
       this.nowNum = this.nowNum + 1
       this.mPaging = this.chapters[this.nowNum].chapter_id
@@ -229,10 +242,14 @@ export default {
       this.mousePos(e)
       this.PagingEndX = this.pos.x
       if (this.PagingStartX - this.PagingEndX > 50) {
-        console.log('←前一页')
+        this.mPrev()
       } else if (this.PagingStartX - this.PagingEndX < -50) {
-        console.log('→后一页')
+        this.mNext()
       }
+    },
+    mSideNav_ListBtn: function (val, index) {
+      this.nowNum = index
+      this.mPaging = val
     },
     getchaptercontent: function () {
       this.mChaptercontent = false
@@ -247,10 +264,12 @@ export default {
     getcatalogInfo: function () {
       this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
         this.dataCatalog = res.data.data
-        this.chapter_count = this.dataCatalog.chapter_count
+        this.chapter_count = this.dataCatalog.chapters.length
         this.chapters = this.dataCatalog.chapters
+        this.mBookState = this.dataCatalog.progress
         for (var i in this.chapters) {
           if (parseInt(this.chapters[i].chapter_id) === parseInt(this.$route.query.chapter_id)) {
+            this.mBookPosition = i
             this.distance = i * (this.dragWidth / this.chapter_count)
             this.countNum(this.distance)
           }
@@ -262,7 +281,8 @@ export default {
     }
   },
   mounted: function () {
-    this.dragWidth = parseInt((document.getElementById('main').offsetWidth / 750) * (6.466667 * 75))
+    this.mRatio = document.getElementById('main').offsetWidth / 750
+    this.dragWidth = parseInt(this.mRatio * (6.466667 * 75))
   },
   filters: {
     mPercentFilter (value) {
@@ -280,10 +300,17 @@ export default {
   watch: {
     mPaging: function (val) {
       this.mAticleNav = false
-      this.mPagingBar = false
+      // this.mPagingBar = false
       this.$router.push('/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + val)
       this.getchaptercontent()
       this.parameter()
+      this.distance = this.nowNum * (this.dragWidth / this.chapter_count)
+      this.countNum(this.distance)
+      for (var i in this.chapters) {
+        if (parseInt(this.chapters[i].chapter_id) === parseInt(val)) {
+          this.mBookPosition = i
+        }
+      }
     }
   }
 }
@@ -329,7 +356,8 @@ export default {
 .mASetup_Type{margin-top:0.533333rem;display:flex;justify-content:space-between;overflow:hidden;}
 .mASetup_Type div{width:1.6rem;height:0.693333rem;line-height:0.693333rem;font-size:0.32rem;color:#fff;border:1px solid #474747;border-radius:0.1rem;display:flex;justify-content:center;overflow:hidden;box-sizing:border-box;cursor:pointer;}
 .mASetup_Type div.hov{border:1px solid #56cd8a;color:#56cd8a;}
-.mSideNav{left:50%;margin-left:-5rem;-webkit-animation:mSideNavR 0.8s ease-in-out forwards;animation:mSideNavR 0.8s ease-in-out forwards;}
+.mSideNav{left:50%;margin-left:-5rem;opacity:0;-webkit-transform:translate(-14rem,0);transform:translate(-14rem,0);}
+.mSideNav_hov{-webkit-animation:mSideNavR 0.8s ease-in-out forwards;animation:mSideNavR 0.8s ease-in-out forwards;}
 .mAticle_w{width:100%;display:flex;flex-direction:column;overflow:hidden;}
 .mAticle{font-size:0.426667rem;line-height:1.3;padding:0.4rem;display:flex;flex-direction:column;overflow:hidden;}
 .mAticle p{text-indent:2em;padding:0.1rem 0;display:flex;overflow:hidden;}
