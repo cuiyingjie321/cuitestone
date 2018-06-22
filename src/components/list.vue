@@ -10,6 +10,7 @@
           </div>
         </li>
       </ul>
+      <div v-if="!bookListMsg" class="mLoadArticle"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </section>
   </div>
 </template>
@@ -20,7 +21,8 @@ export default {
   data () {
     return {
       dataInfo: [],
-      bookList: []
+      bookList: [],
+      bookListMsg: ''
     }
   },
   methods: {
@@ -31,6 +33,7 @@ export default {
       this.$http.get('/wap/store', {}).then(function (res) {
         this.dataInfo = res.data
         this.bookList = this.dataInfo.data
+        this.bookListMsg = this.dataInfo.return_msg
       },
       function (res) {
         alert(res.status)

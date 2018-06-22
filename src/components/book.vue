@@ -1,43 +1,44 @@
 <template>
   <div class="main">
-    <div>
-      <ul class="mModuleLista mModuleLista_1">
-        <li>
-          <div class="mModuleaL"><img :src="dataDetail.cover_img" :alt="dataDetail.name"/></div>
-          <div class="mModuleaR">
-            <div class="mModuleaR_Ti">{{ dataDetail.name }}</div>
-            <div class="mModuleaR_Info">{{ dataDetail.author }}</div>
-            <div class="mModuleaR_Rate">
-              <div class="mStar"><div :style="'width:'+dataDetail.read_num +'%'"></div></div>{{ dataDetail.read_num }}人阅读
-            </div>
-            <div class="mModuleaR_Leaves">{{ dataDetail.user_money }}</div>
+    <ul v-if="dataDetail.name" class="mModuleLista mModuleLista_1">
+      <li>
+        <div class="mModuleaL"><img :src="dataDetail.cover_img" :alt="dataDetail.name"/></div>
+        <div class="mModuleaR">
+          <div class="mModuleaR_Ti">{{ dataDetail.name }}</div>
+          <div class="mModuleaR_Info">{{ dataDetail.author }}</div>
+          <div class="mModuleaR_Rate">
+            <div class="mStar"><div :style="'width:'+dataDetail.read_num +'%'"></div></div>{{ dataDetail.read_num }}人阅读
           </div>
-        </li>
-      </ul>
-      <div class="mIntroduce">{{ dataDetail.desc }}</div>
-    </div>
+          <div class="mModuleaR_Leaves">{{ dataDetail.user_money }}</div>
+        </div>
+      </li>
+    </ul>
+    <div v-if="dataDetail.name" class="mIntroduce">{{ dataDetail.desc }}</div>
+    <div v-if="!dataDetail.name" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     <div class="mModuleb">
-      <div class="mSeeTi">查看目录：{{ chapterInfo.chapter_count }}章</div>
-      <div class="mSeeTe">
-        <router-link v-for="list in chapterInfo.chapters.slice(0,7)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if ="list.free == 1">免费</span></router-link>
+      <div v-if="chapterInfo.chapter_count" class="mSeeTi">查看目录：{{ chapterInfo.chapter_count }}章</div>
+      <div v-if="chapterInfo.chapter_count" class="mSeeTe">
+        <router-link v-for="list in chapters.slice(0,7)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if ="list.free == 1">免费</span></router-link>
       </div>
-      <div v-if="catalogInfoDetail.chapters.length > 7" class="mSeeBtn" @click="mSideBtn">查看更多章节 ></div>
+      <div v-if="chapterInfo.chapter_count && catalogInfoDetail.length > 7" class="mSeeBtn" @click="mSideBtn">查看更多章节 ></div>
+      <div v-if="!chapterInfo.chapter_count" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </div>
     <div class="mModule">
       <h3 class="mModuleTi">喜欢这本书的人也喜欢<router-link to="/classifylist?id=1">查看更多 &gt;</router-link></h3>
-      <ul class="mModuleList">
+      <ul class="mModuleList mModuleList_PB">
         <li v-for="list in bookRecommend.books" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
       </ul>
+      <div v-if="!bookRecommend.books" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </div>
-    <div class="mBookNav">
+    <div v-if="chapterInfo.chapter_count" class="mBookNav">
       <div @click="mBookShelf" class="mBookNavL">加入书架</div>
-      <router-link v-for="list in chapterInfo.chapters.slice(0,1)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id" class="mBookNavR">免费试读</router-link>
+      <router-link v-for="list in chapters.slice(0,1)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id" class="mBookNavR">免费试读</router-link>
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
     <div v-if="mSideNav" class="mSideNav">
-      <div class="mSideNav_Ti">连载 本书共{{ chapterInfo.chapter_count }}章</div>
       <div class="mSideNav_List">
-        <router-link v-for="list in  catalogInfoDetail.chapters" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if="list.free == 1">免费</span></router-link>
+        <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ catalogInfoDetail.length }}章</div>
+        <router-link v-for="list in catalogInfoDetail" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if="list.free == 1">免费</span></router-link>
       </div>
     </div>
   </div>
@@ -55,7 +56,9 @@ export default {
       chapterInfo: [],
       bookRecommendData: [],
       bookRecommend: [],
-      mSideNav: ''
+      mSideNav: '',
+      mBookState: '',
+      chapters: []
     }
   },
   methods: {
@@ -83,6 +86,7 @@ export default {
         this.dataInfo = res.data
         this.dataDetail = this.dataInfo.data.books.info
         this.chapterInfo = this.dataInfo.data.books.chapter_info
+        this.chapters = this.dataInfo.data.books.chapter_info.chapters
       },
       function (res) {
         alert(res.status)
@@ -91,7 +95,8 @@ export default {
     getbookcataloginfo: function () {
       this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
         this.catalogInfo = res.data
-        this.catalogInfoDetail = this.catalogInfo.data
+        this.catalogInfoDetail = this.catalogInfo.data.chapters
+        this.mBookState = this.catalogInfo.data.progress
       },
       function (res) {
         alert(res.status)
@@ -128,6 +133,7 @@ export default {
 .mBookNavL{border-top:1px solid #d8d8d8;border-right:1px solid #d8d8d8;}
 .mBookNavR{color:#fff;background-color:#f60;}
 .mSideNav{right:50%;margin-right:-5rem;-webkit-animation:mSideNavR 0.8s ease-in-out forwards;animation:mSideNavR 0.8s ease-in-out forwards;}
+.mModuleList_PB{padding-bottom:1rem;}
 @-webkit-keyframes mSideNavR{
 0%{opacity:0;-webkit-transform:translate(14rem,0);}
 100%{opacity:1;-webkit-transform:translate(0,0);}

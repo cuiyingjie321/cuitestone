@@ -3,16 +3,18 @@
     <section class="mContent_w">
       <div class="mModule mModule_N">
         <h3 class="mModuleTi">我的书架</h3>
-        <ul class="mModuleList">
+        <ul v-if="MyBookShelfMsg" class="mModuleList">
           <li v-for="list in MyBookShelf" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
         </ul>
-        <div v-if="!MyBookShelf" class="mModuleNull">还没有阅读，快去阅读吧~</div>
+        <div v-if="MyBookShelfMsg && !MyBookShelf" class="mModuleNull">还没有阅读，快去阅读吧~</div>
+        <div v-if="!MyBookShelfMsg" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
       </div>
       <div class="mModule">
         <h3 class="mModuleTi">相关推荐</h3>
-        <ul class="mModuleList">
+        <ul v-if="RelevantMsg" class="mModuleList">
           <li v-for="list in Relevant" :key="list.id"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link></li>
         </ul>
+        <div v-if="!RelevantMsg" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
       </div>
     </section>
   </div>
@@ -23,7 +25,9 @@ export default {
   data () {
     return {
       MyBookShelf: [],
-      Relevant: []
+      Relevant: [],
+      MyBookShelfMsg: '',
+      RelevantMsg: ''
     }
   },
   methods: {
@@ -33,6 +37,7 @@ export default {
     getbooklist: function () {
       this.$http.get('/wap', {}).then(function (res) {
         this.MyBookShelf = res.data.data.books
+        this.MyBookShelfMsg = res.data.return_msg
       },
       function (res) {
         alert(res.status)
@@ -41,6 +46,7 @@ export default {
     getbookRecommend: function () {
       this.$http.get('/wap/index/bookRecommend', {}).then(function (res) {
         this.Relevant = res.data.data.books
+        this.RelevantMsg = res.data.return_msg
       },
       function (res) {
         alert(res.status)

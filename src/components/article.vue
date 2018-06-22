@@ -2,7 +2,7 @@
   <div id="main" class="main">
     <div @touchstart="PagingStart($event)" @touchend="PagingEnd($event)" class="mAticle" :style="'font-size:' + ( mASetup_Font / 75 ) +'rem'" @click="mAticleBtn">
       <p v-if="mChaptercontent" v-for="list in mChaptercontent" :key="list.id">{{ list }}</p>
-      <div v-if="!mChaptercontent" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
+      <div v-if="!mChaptercontent" class="mLoadArticle"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </div>
     <div v-if="mAticleSetup && mAticleNav" class="mASetup">
       <!-- 事件暂时调用的是章节进度条 <div class="mASetup_Bright">
@@ -366,7 +366,6 @@ export default {
 .progressbar{width:0;height:0.066667rem;background-color:#56cd8a;font-size:0;line-height:0;}
 .bardrag{width:0.32rem;height:0.32rem;background-color:#454545;border:2px solid #56cd8a;border-radius:50%;position:absolute;top:50%;left:0;margin-top:-0.16rem;margin-left:-0.16rem;display:block;overflow:hidden;box-sizing:border-box;}
 .mASetup_BrightL_Bar{width:6.066667rem;margin-right:0.4rem;}
-.mLoad{width:1rem;height:1rem;position:fixed;top:50%;;left:50%;margin-top:-0.5rem;margin-left:-0.5rem;}
 @-webkit-keyframes mSideNavR{
 0%{opacity:0;-webkit-transform:translate(-14rem,0);}
 100%{opacity:1;-webkit-transform:translate(0,0);}
