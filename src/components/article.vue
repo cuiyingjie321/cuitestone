@@ -65,7 +65,7 @@
     <div :class="['mSideNav', { 'mSideNav_hov': mSideNav}]">
       <div id="mSideNav_List" class="mSideNav_List">
         <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ chapter_count }}章</div>
-        <div v-for="(list , index)  in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 1">免费</span></div>
+        <div v-for="(list , index) in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 1">免费</span></div>
       </div>
     </div>
   </div>
@@ -102,7 +102,7 @@ export default {
       mPaging: 0, // url更新时请求数据
       chapter_count: 0,
       mBookState: '',
-      mBookPosition: 0 // 当前章节在数组中的位置
+      mBookPosition: 0, // 当前章节在数组中的位置
     }
   },
   methods: {
@@ -254,8 +254,14 @@ export default {
     getchaptercontent: function () {
       this.mChaptercontent = false
       this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id}}).then(function (res) {
-        this.mBookName = res.data.data.title
-        this.mChaptercontent = res.data.data.content.split('\n')
+        if (res.data.return_code === 2) {
+          // 未登录
+          alert('请先登录')
+          this.$router.push('/my')
+        } else {
+          this.mBookName = res.data.data.title
+          this.mChaptercontent = res.data.data.content.split('\n')
+        }
       },
       function (res) {
         alert(res.status)
@@ -301,7 +307,7 @@ export default {
     mPaging: function (val) {
       this.mAticleNav = false
       // this.mPagingBar = false
-      this.$router.push('/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + val)
+      this.$router.replace('/article?book_id=' + this.$route.query.book_id + '&chapter_id=' + val)
       this.getchaptercontent()
       this.parameter()
       this.distance = this.nowNum * (this.dragWidth / this.chapter_count)
@@ -328,6 +334,8 @@ export default {
 .mAticleNav span{width:0.613333rem;height:0.613333rem;margin:0 auto;background-repeat:no-repeat;background-position:0 0;background-size:0.613333rem 0.613333rem;display:block;overflow:hidden;}
 .mAticleNav p{width:100%;line-height:0.533333rem;font-size:0.32rem;text-align:center;color:#8c8c8c;margin-top:0.066667rem;display:block;overflow:hidden;}
 .mAticleNav p.hov{color:#56cd8a;}
+.mAticleCode{width:10rem;text-align:center;line-height:1.3;font-size:0.64rem;padding:0 1rem;position:fixed;top:50%;left:50%;margin-left:-5rem;margin-top:-0.416rem;display:block;overflow:hidden;box-sizing:border-box;}
+.mAticleCode a{color:#333;}
 .mPaging{width:10rem;height:1.093333rem;background-color:#2c2a2b;margin-left:-5rem;position:fixed;bottom:1.546667rem;left:50%;display:flex;justify-content:center;align-items:center;overflow:hidden;}
 .mPaging span{width:1.733333rem;line-height:1.093333rem;font-size:0.32rem;color:#8c8c8c;display:flex;justify-content:center;overflow:hidden;cursor:pointer;}
 .mPagingInfo{width:9.2rem;background-color:#2c2a2b;border:1px solid #222021;border-radius:0.2rem;padding:0.133333rem 0.4rem;margin-left:-4.6rem;position:fixed;bottom:2.906667rem;left:50%;display:block;overflow:hidden;box-sizing:border-box;}

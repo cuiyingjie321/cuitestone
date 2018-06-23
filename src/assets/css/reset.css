@@ -35,6 +35,7 @@ section{display:flex;}
 .mStyle_4{background-color:#c7d8e1;}
 .mStyle_5{background-color:#000a15;}
 .mStyle_5 .mAticle{color:#2f606e;}
+.mStyle_5 .mAticleMsg a{color:#333;}
 .mNight{background-color:#000a15;}
 .mNight .mAticle{color:#2f606e;}
 /* module start*/
@@ -48,8 +49,8 @@ section{display:flex;}
 .mModuleNull{width:10rem;height:1.2rem;line-height:1.2rem;font-size:0.426667rem;font-weight:normal;color:#bababa;text-align:center;overflow:hidden;}
 .mModuleList{width:10rem;padding-top:0.16rem;display:flex;flex-wrap:wrap;justify-content:center;overflow:hidden;box-sizing:border-box;}
 .mModuleList li{width:3.146666rem;padding-top:0.266667rem;display:flex;flex-direction:column;overflow:hidden;}
-.mModuleList a{color:#242424;display:flex;flex-direction:column;overflow:hidden;}
-.mModuleList a:active,.mModuleTi a:active,.mModuleaR_Ti a:active{color:#42c079;}
+.mModuleList a,.mModuleList div{color:#242424;display:flex;flex-direction:column;overflow:hidden;}
+.mModuleList a:active,.mModuleList div:active,.mModuleTi a:active,.mModuleaR_Ti a:active{color:#42c079;}
 .mModuleList span{width:2.613333rem;margin:0 auto;border-radius:0.1rem;display:block;overflow:hidden;-webkit-box-shadow:0 2px 4px 0 rgba(178,178,178,0.50);box-shadow:0 2px 4px 0 rgba(178,178,178,0.50);}
 .mModuleList p{width:2.613333rem;height:1.333333rem;line-height:0.586667rem;font-size:0.426667rem;margin:0.16rem auto 0;display:flex;overflow:hidden;box-sizing:border-box;}
 .mModuleLista{width:10rem;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}

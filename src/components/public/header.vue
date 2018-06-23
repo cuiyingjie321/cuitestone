@@ -5,7 +5,7 @@
       <router-link to="/search" class="mHeader_Search">搜索</router-link>
     </div>
     <div v-else-if="mType == 1" class="mHeadera">
-      <div class="mHeaderaChoiceL"><input type="text" :placeholder="mDefault" v-model="mKeyword"/></div>
+      <div class="mHeaderaChoiceL"><input type="text" :placeholder="mDefault" v-model="mKeyword" @focus="mSearchFocus"/></div>
       <div class="mHeaderaChoiceR"><input type="submit" value="搜索" @click="mSearchBtn"/></div>
     </div>
     <div v-else-if="mType == 2 || mType == 3 || mType == 4" :class="['mHeaderb', { mHeaderc: mType == 4 }]">
@@ -30,6 +30,11 @@ export default {
     },
     mSearchBtn: function () {
       this.$emit('mKeywordReceive', this.mKeyword)
+    },
+    mSearchFocus: function () {
+      if (this.$route.path !== '/search') {
+        this.$router.push('/search')
+      }
     }
   }
 }

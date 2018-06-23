@@ -37,8 +37,8 @@ export default {
       this.mDay = msg.mDay
     },
     mKeywordReceive: function (msg) {
+      // 从header子组件接收关键词 发送到搜索组件里
       this.mKeyword = msg
-      console.log(this.mKeyword)
     }
   },
   updated () {
