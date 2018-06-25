@@ -13,6 +13,20 @@ Vue.config.productionTip = false
 Vue.http.options.emulateHTTP = true
 Vue.http.options.emulateJSON = true
 /* eslint-disable no-new */
+router.beforeEach((to, from, next) => {
+  let sessionId = sessionStorage.getItem('sessionId')
+  if (!sessionId && to.path !== '/author') {
+    // 第一次进入项目 // 保存用户进入的url
+    // store.state.beforeLoginUrl = to.fullPath
+    // sessionStorage.setItem("user_name",to.fullPath)
+    // sessionStorage.setItem("user_name","test22")
+    // alert(store.state.beforeLoginUrl)
+    // setCookie('beforeLoginUrl', to.fullPath)
+    next('/author')
+    return false
+  }
+  next()
+})
 new Vue({
   el: '#app',
   router,

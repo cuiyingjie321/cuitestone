@@ -48,6 +48,10 @@ export default new Router({
       path: '/article',
       name: '书籍名称',
       component: resolve => require(['@/components/article'], resolve)
+    }, {
+      path: '/author',
+      name: '微信授权',
+      component: resolve => require(['@/components/author'], resolve)
     }
   ]
 })

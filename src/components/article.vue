@@ -102,7 +102,7 @@ export default {
       mPaging: 0, // url更新时请求数据
       chapter_count: 0,
       mBookState: '',
-      mBookPosition: 0, // 当前章节在数组中的位置
+      mBookPosition: 0 // 当前章节在数组中的位置
     }
   },
   methods: {
