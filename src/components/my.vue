@@ -1,24 +1,27 @@
 <template>
   <div class="main">
-    <section v-if="mId" class="mMyInfo_w">
+    <section v-if="!mUser.is_login" class="mMyInfo_w">
+      <div class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
+    </section>
+    <section v-if="mUser.is_login === 1" class="mMyInfo_w">
       <div class="mMyInfoT">
-        <router-link to="/reviseportrait" class="mMyInfoT_Tx"><img :src="mPortrait" :alt="mName"/></router-link>
-        <div :class="['mMyInfoTL', { 'mMyInfoTL_No': !mPhone }]">
-          <div class="mMyInfoTLName">{{ mName }}</div>
-          <div class="mMyInfoTLPhone">{{ mPhone }}</div>
+        <router-link to="/reviseportrait" class="mMyInfoT_Tx"><img :src="mUser.head_image" :alt="mUser.nickname"/></router-link>
+        <div :class="['mMyInfoTL', { 'mMyInfoTL_No': !mUser.phone }]">
+          <div class="mMyInfoTLName">{{ mUser.nickname }}</div>
+          <div class="mMyInfoTLPhone">{{ mUser.phone }}</div>
         </div>
-        <router-link to="/recharge" class="mMyRecharge">充值</router-link>
+        <router-link to="/record?type=recharge" class="mMyRecharge">充值</router-link>
       </div>
       <div class="mMyInfoB_w">
-        <div class="mMyInfoB"><span>{{ mBook }}</span><p>我的书籍</p></div>
-        <div class="mMyInfoB"><span>{{ mLeaves }}</span><p>花瓣</p></div>
+        <div class="mMyInfoB"><span>{{ mUser.book_count }}</span><p>我的书籍</p></div>
+        <div class="mMyInfoB"><span>{{ mUser.balance }}</span><p>花瓣</p></div>
       </div>
     </section>
-    <section v-if="!mId" class="mMyInfoa_w">
+    <section v-else-if="mUser.is_login === 0" class="mMyInfoa_w">
       <router-link to="/login"><img src="./../assets/images/mMyIcon_7.png" alt="通过微信登录"/>通过微信登录</router-link>
     </section>
     <section class="mInterface_w">
-      <router-link to="/record?type=binding" v-if="!mPhone"><i><img src="./../assets/images/mMyIcon_1.png" alt="绑定手机号"/></i><b>绑定手机号</b><span></span></router-link>
+      <router-link to="/record?type=binding" v-if="!mUser.phone"><i><img src="./../assets/images/mMyIcon_1.png" alt="绑定手机号"/></i><b>绑定手机号</b><span></span></router-link>
       <router-link to="/recentreading"><i><img src="./../assets/images/mMyIcon_2.png" alt="最近阅读"/></i><b>最近阅读</b><span></span></router-link>
     </section>
     <section class="mInterface_w">
@@ -33,26 +36,29 @@
 </template>
 
 <script>
-import test2 from './../assets/images/mTest_1.jpg'
 // mTitle 标题,Classify 书城分类
 export default {
   data () {
     return {
-      mId: '',
-      mName: '小青梅',
-      mPortrait: test2,
-      mPhone: '',
-      mBook: '150',
-      mLeaves: '150'
+      mUser: []
     }
   },
   methods: {
     parameter: function () {
       this.$emit('mParameter', {'mType': '2', 'mNav': 'true', 'mIndex': '3', 'mStyle': 'true'})
+    },
+    getuser: function () {
+      this.$http.get('wap/user', {'params': {'session_id': '888888'}}).then(function (res) {
+        this.mUser = res.data.data
+      },
+      function (res) {
+        alert(res.status)
+      })
     }
   },
   created: function () {
     this.parameter()
+    this.getuser()
   }
 }
 </script>

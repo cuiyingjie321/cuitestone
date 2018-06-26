@@ -4,12 +4,12 @@
     <ul v-if="RecordType == 'recordrecharge'" class="mRecord">
       <li v-for="list in Record" :key="list.id">
         <div class="mRecordT">
-          <div>{{ list.mode }}</div>
-          <div>+{{ list.leaves }}花瓣</div>
+          <div>{{ list.pay_name }}</div>
+          <div>{{ list.petal }}</div>
         </div>
         <div class="mRecordB">
-          <div>{{ list.date }}</div>
-          <div>{{ list.money }}.00元</div>
+          <div>{{ list.pay_time }}</div>
+          <div>{{ list.recharge_account }}</div>
         </div>
       </li>
     </ul>
@@ -17,12 +17,12 @@
     <ul v-if="RecordType == 'recordconsume'" class="mRecord">
       <li v-for="list in Record" :key="list.id">
         <div class="mRecordT">
-          <div><router-link :to="list.href">{{ list.item }}</router-link></div>
-          <div>-{{ list.leaves }}花瓣</div>
+          <div>{{ list.book_name }}</div>
+          <div>{{ list.consume_account }}</div>
         </div>
         <div class="mRecordB">
-          <div>{{ list.detailed }}</div>
-          <div>{{ list.date }} {{ list.time }}</div>
+          <div>{{ list.chapter_title }}</div>
+          <div>{{ list.consume_time }}</div>
         </div>
       </li>
     </ul>
@@ -76,6 +76,7 @@
         <div class="mSetupRIcon_1"></div>
       </div>
     </div>
+    <!-- <div v-if="code !== 0" class="mLoadArticle"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div> -->
   </div>
 </template>
 
@@ -100,61 +101,8 @@ export default {
       mRechargeIndex: '0',
       mRecharge_Money: '6',
       mFontIndex: '0',
-      Record: [{
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }, {
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }, {
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }, {
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }, {
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }, {
-        mode: '微信支付',
-        date: '2018-08-09',
-        time: '10:24',
-        leaves: '1000',
-        money: '10',
-        item: '烈火如歌',
-        href: '/book',
-        detailed: '第三章 时光深入'
-      }],
+      Record: [],
+      code: false,
       Recharge: [{
         money: '6',
         leaves: '600'
@@ -272,10 +220,43 @@ export default {
     mFontBtn: function (index) {
       // 字体选择
       this.mFontIndex = index
+    },
+    getrechargelog: function () {
+      // 充值记录
+      this.$http.get('wap/user/rechargelog', {'params': {'session_id': '888888', 'offset': '0'}}).then(function (res) {
+        this.Record = res.data.data.records
+        this.code = parseInt(res.data.return_code)
+      },
+      function (res) {
+        alert(res.status)
+      })
+    },
+    getconsumelog: function () {
+      // 消费记录
+      this.$http.get('wap/user/consumelog', {'params': {'session_id': '888888', 'offset': '2'}}).then(function (res) {
+        this.Record = res.data.data.records
+        this.code = parseInt(res.data.return_code)
+      },
+      function (res) {
+        alert(res.status)
+      })
     }
   },
-  mounted: function () {
+  created: function () {
     this.parameter()
+    if (this.RecordType === 'recordrecharge') {
+      this.getrechargelog()
+    } else if (this.RecordType === 'recordconsume') {
+      this.getconsumelog()
+    } else if (this.RecordType === 'binding') {
+      this.mName = '绑定手机号'
+    } else if (this.RecordType === 'setup') {
+      this.mName = '设置'
+    } else if (this.RecordType === 'recharge') {
+      this.mName = '充值中心'
+    } else if (this.RecordType === 'font') {
+      this.mName = '字体设置'
+    }
   },
   watch: {
     // 手机号码验证
@@ -315,8 +296,6 @@ export default {
 .mRecordT,.mRecordB{width:100%;display:flex;justify-content:space-between;overflow:hidden;}
 .mRecordT{font-size:0.426667rem;line-height:0.64rem;color:#242424;}
 .mRecordB{font-size:0.32rem;line-height:0.426667rem;color:#adadad;}
-.mRecordT a{color:#242424;}
-.mRecordT a:active{color:#42c079;}
 .mBinding_w{width:10rem;margin-top:0.4rem;padding:0 0.4rem;margin-left:auto;margin-right:auto;background-color:#fff;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;}
 .mBinding,.mSetup,.mFont{width:100%;height:1.36rem;line-height:1.36rem;color:#242424;border-bottom:1px solid #f1f1f1;position:relative;display:flex;overflow:hidden;box-sizing:border-box;}
 .mBindingL{width:2.4rem;font-size:0.373333rem;display:flex;overflow:hidden;}
