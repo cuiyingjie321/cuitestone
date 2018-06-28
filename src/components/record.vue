@@ -103,6 +103,16 @@ export default {
       mFontIndex: '0',
       Record: [],
       code: false,
+      appId: '',
+      noncestr: '',
+      sign: '',
+      package: '',
+      timestamp: '',
+      prepayid: '',
+      partnerid: '',
+      orderData: '',
+      configData: '',
+      config: '',
       Recharge: [{
         money: '6',
         leaves: '600'
@@ -214,6 +224,31 @@ export default {
       this.mRecharge_Money = this.Recharge[index].money
     },
     mRecharge_Submit: function (index) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.post('/wap/user/weixin', {'sessionId': sessionId, 'money': this.mRecharge_Money}).then(function (res) {
+        this.orderData = res.data.data
+        this.wx.chooseWXPay({
+          appId: this.orderData.appId,
+          timestamp: this.orderData.timeStamp,
+          nonceStr: this.orderData.nonceStr,
+          package: this.orderData.package,
+          signType: this.orderData.signType,
+          paySign: this.orderData.paySign,
+          success: function (res) {
+            // 支付成功后的回调函数
+            if (res.errMsg === 'chooseWXPay:ok') {
+              alert('支付成功')
+              window.location.href = '/my'
+            }
+          },
+          fail: function (res) {
+            alert('支付失败')
+          }
+        })
+      },
+      function (res) {
+        // alert(res.status)
+      })
       // 充值提交
       console.log(this.mRecharge_Money)
     },
@@ -223,7 +258,7 @@ export default {
     },
     getrechargelog: function () {
       // 充值记录
-      this.$http.get('wap/user/rechargelog', {'params': {'session_id': '888888', 'offset': '0'}}).then(function (res) {
+      this.$http.get('/wap/user/rechargelog', {'params': {'session_id': '888888', 'offset': '0'}}).then(function (res) {
         this.Record = res.data.data.records
         this.code = parseInt(res.data.return_code)
       },
@@ -233,17 +268,45 @@ export default {
     },
     getconsumelog: function () {
       // 消费记录
-      this.$http.get('wap/user/consumelog', {'params': {'session_id': '888888', 'offset': '2'}}).then(function (res) {
+      this.$http.get('/wap/user/consumelog', {'params': {'session_id': '888888', 'offset': '2'}}).then(function (res) {
         this.Record = res.data.data.records
         this.code = parseInt(res.data.return_code)
       },
       function (res) {
         alert(res.status)
       })
+    },
+    wxconfig: function () {
+      this.wx.config({
+        debug: false,
+        appId: this.config.app_id,
+        timestamp: this.config.timestamp,
+        nonceStr: this.config.nonce_str,
+        signature: this.config.signature,
+        jsApiList: ['chooseWXPay']
+      })
+      this.wx.ready(function () {
+      })
+      this.wx.error(function (res) {
+        alert(res)
+      })
+    },
+    getconfig: function () {
+      // sdk授权
+      let url = window.location.href
+      this.$http.get('/wap/user/wxSign', {'params': {'current_url': url}}).then(function (res) {
+        this.configData = res.data.data
+        this.config = this.configData.data
+        this.wxconfig()
+      })
+    },
+    callpay: function () {
+      this.getconfig()
     }
   },
   created: function () {
     this.parameter()
+    this.getconfig()
     if (this.RecordType === 'recordrecharge') {
       this.getrechargelog()
     } else if (this.RecordType === 'recordconsume') {
