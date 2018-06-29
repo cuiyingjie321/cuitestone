@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <section v-if="!mUser.is_login" class="mMyInfo_w">
+    <section v-if="!mUser.is_login && mUser.is_login !== 0" class="mMyInfo_w">
       <div class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </section>
     <section v-if="mUser.is_login === 1" class="mMyInfo_w">
@@ -10,7 +10,7 @@
           <div class="mMyInfoTLName">{{ mUser.nickname }}</div>
           <div class="mMyInfoTLPhone">{{ mUser.phone }}</div>
         </div>
-        <router-link to="/record/?type=recharge" class="mMyRecharge">充值</router-link>
+        <router-link to="/record?type=recharge" class="mMyRecharge">充值</router-link>
       </div>
       <div class="mMyInfoB_w">
         <div class="mMyInfoB"><span>{{ mUser.book_count }}</span><p>我的书籍</p></div>
@@ -30,7 +30,7 @@
     </section>
     <section class="mInterface_w">
       <router-link to="/record?type=setup"><i><img src="./../assets/images/mMyIcon_5.png" alt="设置"/></i><b>设置</b><span></span></router-link>
-      <router-link to="tel:4849202002"><i><img src="./../assets/images/mMyIcon_6.png" alt="客服热线"/></i><b>客服热线</b><p>4849202002</p></router-link>
+      <router-link :to="'tel:' + mTel"><i><img src="./../assets/images/mMyIcon_6.png" alt="客服热线"/></i><b>客服热线</b><p>{{ mTel }}</p></router-link>
     </section>
   </div>
 </template>
@@ -40,7 +40,8 @@
 export default {
   data () {
     return {
-      mUser: []
+      mUser: [],
+      mTel: '010-85516537'
     }
   },
   methods: {
@@ -50,6 +51,7 @@ export default {
     getuser: function () {
       this.$http.get('wap/user', {'params': {'session_id': '888888'}}).then(function (res) {
         this.mUser = res.data.data
+        this.mTel = res.data.data.value[5].num
       },
       function (res) {
         alert(res.status)
