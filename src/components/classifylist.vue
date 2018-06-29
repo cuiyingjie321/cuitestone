@@ -1,6 +1,7 @@
 <template>
-  <div class="main" style="position:fixed;overflow:visible;">
-    <scroller style="top:1.133333rem;overflow:visible;" :on-infinite="infinite">
+  <div class="main mFixed">
+    <scroller :on-infinite="infinite">
+      <div class="mSeize"></div>
       <ul v-for="mlist in bookList" :key="mlist.id" class="mModuleLista mModuleLista_1">
         <li v-for="list in mlist.books" :key="list.id">
           <router-link :to="'/book?book_id='+list.book_id" class="mModuleaL"><img :src="list.cover_img" :alt="list.name"/></router-link>
@@ -20,7 +21,8 @@
 export default {
   data () {
     return {
-      pages: 1,
+      mNum: 0,
+      mExercise: true,
       dataInfo: [],
       bookList: []
     }
@@ -29,9 +31,18 @@ export default {
     parameter: function () {
       this.$emit('mParameter', {'mType': '3', 'mHeaderFixed': true})
     },
+    More: function (val) {
+      if (val === -1) {
+        this.mNum = -1
+      } else {
+        this.mNum = this.mNum + val
+        this.mExercise = true
+      }
+    },
     getbooklist: function () {
-      this.$http.get('/wap/store/categoryInfo', {'params': {'pages': this.pages}}).then(function (res) {
+      this.$http.get('/wap/store/categoryInfo', {'params': {'offset': this.mNum}}).then(function (res) {
         this.dataInfo = res.data
+        this.More(res.data.data.offset)
         this.bookList.push(this.dataInfo.data)
       },
       function (res) {
@@ -39,16 +50,27 @@ export default {
       })
     },
     infinite: function (done) {
-      setTimeout(() => {
-        this.pages = this.pages + 1
-        this.getbooklist()
-        done()
-      }, 1500)
+      // 没有数据时
+      if (this.mNum < 0) {
+        setTimeout(() => {
+          done(true)
+        }, 1500)
+        return
+      }
+      // 有数据时
+      if (this.mNum >= 0) {
+        setTimeout(() => {
+          if (this.mExercise === true) {
+            this.mExercise = false
+            this.getbooklist()
+          }
+          done()
+        }, 1500)
+      }
     }
   },
   created: function () {
     this.parameter()
-    this.getbooklist()
   }
 }
 </script>
