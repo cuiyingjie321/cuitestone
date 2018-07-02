@@ -49,7 +49,8 @@ export default {
       this.$emit('mParameter', {'mType': '2', 'mNav': 'true', 'mIndex': '3', 'mStyle': 'true'})
     },
     getuser: function () {
-      this.$http.get('wap/user', {'params': {'session_id': '888888'}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user', {'params': {'session_id': sessionId}}).then(function (res) {
         this.mUser = res.data.data
         this.mTel = res.data.data.value[5].num
       },

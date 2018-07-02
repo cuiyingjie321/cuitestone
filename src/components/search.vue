@@ -66,7 +66,8 @@ export default {
     },
     // 搜索历史
     getsearchhistory: function () {
-      this.$http.get('/wap/search/searchHistory', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap/search/searchHistory', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
         this.historyData = res.data.data.search_list
         this.hotSearchData = res.data.data.hot_recommend
       },
@@ -76,7 +77,8 @@ export default {
     },
     // 搜索结果
     getbooklist: function (curVal, oldVal) {
-      this.$http.get('/wap/search', {'params': {'keywords': curVal}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap/search', {'params': {'keywords': curVal, 'session_id': sessionId}}).then(function (res) {
         this.booklist = res.data.data.books
         this.descInfo = res.data.data.desc
         this.relatedBook = res.data.data.recommend

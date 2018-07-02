@@ -83,7 +83,8 @@ export default {
       })
     },
     getbookinfo: function () {
-      this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
         this.dataInfo = res.data
         this.dataDetail = this.dataInfo.data.books.info
         this.chapterInfo = this.dataInfo.data.books.chapter_info
@@ -94,7 +95,8 @@ export default {
       })
     },
     getbookcataloginfo: function () {
-      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
         this.catalogInfo = res.data
         this.catalogInfoDetail = this.catalogInfo.data.chapters
         this.mBookState = this.catalogInfo.data.progress

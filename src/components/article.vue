@@ -252,8 +252,9 @@ export default {
       this.mPaging = val
     },
     getchaptercontent: function () {
+      let sessionId = sessionStorage.getItem('sessionId')
       this.mChaptercontent = false
-      this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id}}).then(function (res) {
+      this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id, 'session_id': sessionId}}).then(function (res) {
         if (res.data.return_code === 2) {
           // 未登录
           alert('请先登录')
@@ -268,7 +269,8 @@ export default {
       })
     },
     getcatalogInfo: function () {
-      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap/book/catalogInfo', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
         this.dataCatalog = res.data.data
         this.chapter_count = this.dataCatalog.chapters.length
         this.chapters = this.dataCatalog.chapters

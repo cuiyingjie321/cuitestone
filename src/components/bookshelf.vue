@@ -35,7 +35,8 @@ export default {
       this.$emit('mParameter', {'mType': '0', 'mNav': 'true', 'mIndex': '0'})
     },
     getbooklist: function () {
-      this.$http.get('/wap', {}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('/wap', {'params': {'offset': 0, 'session_id': sessionId}}).then(function (res) {
         this.MyBookShelf = res.data.data.books
         this.MyBookShelfMsg = res.data.return_msg
       },

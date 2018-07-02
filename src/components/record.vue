@@ -241,7 +241,8 @@ export default {
     },
     getrechargelog: function () {
       // 充值记录
-      this.$http.get('wap/user/rechargelog', {'params': {'session_id': '888888', 'offset': this.mNum}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user/rechargelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
         this.Data.push(res.data.data)
         this.More(res.data.data.offset)
         this.ReturnCode = parseInt(res.data.return_code)
@@ -252,7 +253,8 @@ export default {
     },
     getconsumelog: function () {
       // 消费记录
-      this.$http.get('wap/user/consumelog', {'params': {'session_id': '888888', 'offset': this.mNum}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user/consumelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
         this.Data.push(res.data.data)
         this.More(res.data.data.offset)
         this.ReturnCode = parseInt(res.data.return_code)
@@ -287,7 +289,8 @@ export default {
     },
     getrechargeAccount: function () {
       // 充值中心
-      this.$http.get('wap/user/rechargeAccount', {'params': {'session_id': '888888'}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user/rechargeAccount', {'params': {'session_id': sessionId}}).then(function (res) {
         this.Data = res.data.data
         this.mRecharge_Money = this.Data.item[0].sum
         this.ReturnCode = parseInt(res.data.return_code)
@@ -298,7 +301,8 @@ export default {
     },
     getsmsCode: function () {
       // 手机获取验证码
-      this.$http.get('wap/user/smsCode', {'params': {'session_id': '888888', 'phone': this.mPhone}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user/smsCode', {'params': {'session_id': sessionId, 'phone': this.mPhone}}).then(function (res) {
       },
       function (res) {
         alert(res.status)
@@ -306,7 +310,8 @@ export default {
     },
     getmobile: function (val) {
       // 效验验证码
-      this.$http.get('wap/user/mobile', {'params': {'session_id': '888888', 'phone': this.mPhone, 'sms_pwd': val}}).then(function (res) {
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.$http.get('wap/user/mobile', {'params': {'session_id': sessionId, 'phone': this.mPhone, 'sms_pwd': val}}).then(function (res) {
         this.mobilerequest = true
         this.mobilecode = parseInt(res.data.return_code)
         if (this.mobilecode > 0) {

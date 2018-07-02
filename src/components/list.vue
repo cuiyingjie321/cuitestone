@@ -3,9 +3,9 @@
     <section class="mContent_w">
       <ul class="mClassify">
         <li v-for="list in bookList.item" :key="list.id">
-          <router-link :to="'/classifylist?id='+list.id" class="mClassifyL"><img :src="list.category_image" :alt="list.category_name"/></router-link>
+          <router-link :to="'/classifylist?category_id='+list.id" class="mClassifyL"><img :src="list.category_image" :alt="list.category_name"/></router-link>
           <div class="mClassifyR">
-            <div class="mClassifyR_Ti"><router-link :to="'/classifylist?id='+list.id">{{ list.category_name }}频道</router-link></div>
+            <div class="mClassifyR_Ti"><router-link :to="'/classifylist?category_id='+list.id">{{ list.category_name }}频道</router-link></div>
             <div class="mClassifyR_Te">{{ list.count }}</div>
           </div>
         </li>

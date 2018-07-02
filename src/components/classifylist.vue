@@ -40,7 +40,7 @@ export default {
       }
     },
     getbooklist: function () {
-      this.$http.get('/wap/store/categoryInfo', {'params': {'offset': this.mNum}}).then(function (res) {
+      this.$http.get('/wap/store/categoryInfo', {'params': {'offset': this.mNum, 'category_id': this.$route.query.category_id}}).then(function (res) {
         this.dataInfo = res.data
         this.More(res.data.data.offset)
         this.bookList.push(this.dataInfo.data)

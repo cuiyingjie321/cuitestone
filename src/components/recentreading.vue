@@ -34,8 +34,9 @@ export default {
       this.$emit('mParameter', {'mType': '3'})
     },
     getreadhistory: function () {
+      let sessionId = sessionStorage.getItem('sessionId')
       // 最近阅读
-      this.$http.get('wap/user/readhistory', {'params': {'session_id': '888888'}}).then(function (res) {
+      this.$http.get('wap/user/readhistory', {'params': {'session_id': sessionId}}).then(function (res) {
         this.readhistory = res.data.data
         this.code = parseInt(res.data.return_code)
       },
