@@ -10,7 +10,7 @@
           <div class="mMyInfoTLName">{{ mUser.nickname }}</div>
           <div class="mMyInfoTLPhone">{{ mUser.phone }}</div>
         </div>
-        <router-link to="/record?type=recharge" class="mMyRecharge">充值</router-link>
+        <router-link to="/record/?type=recharge" class="mMyRecharge">充值</router-link>
       </div>
       <div class="mMyInfoB_w">
         <div class="mMyInfoB"><span>{{ mUser.book_count }}</span><p>我的书籍</p></div>

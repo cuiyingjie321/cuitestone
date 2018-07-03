@@ -36,12 +36,15 @@ export default {
     },
     getbooklist: function () {
       let sessionId = sessionStorage.getItem('sessionId')
+      if (!sessionId) {
+        sessionId = 0
+      }
       this.$http.get('/wap', {'params': {'offset': 0, 'session_id': sessionId}}).then(function (res) {
         this.MyBookShelf = res.data.data.books
         this.MyBookShelfMsg = res.data.return_msg
       },
       function (res) {
-        alert(res.status)
+        // alert(res.status)
       })
     },
     getbookRecommend: function () {
@@ -50,7 +53,7 @@ export default {
         this.RelevantMsg = res.data.return_msg
       },
       function (res) {
-        alert(res.status)
+        // alert(res.status)
       })
     }
   },

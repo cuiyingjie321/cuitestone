@@ -87,9 +87,11 @@ export default {
       mobilerequest: true,
       mobilecode: 0,
       count: '',
+      config: '',
       mVersion: '1.0.0',
       mRechargeIndex: 0,
       mRecharge_Money: 0,
+      mRecharge_Moneys: 0,
       mFontIndex: 0,
       Data: [],
       ReturnCode: false,
@@ -196,16 +198,18 @@ export default {
     },
     mRecharge_Submit: function (index) {
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.post('/wap/user/weixin', {'sessionId': sessionId, 'money': this.mRecharge_Money}).then(function (res) {
+      this.mRecharge_Moneys = parseInt(this.mRecharge_Money)
+      this.$http.post('/wap/user/weixin', {'sessionId': sessionId, 'money': this.mRecharge_Moneys}).then(function (res) {
         this.orderData = res.data.data
         this.wx.chooseWXPay({
           appId: this.orderData.appId,
-          timestamp: this.orderData.timeStamp,
+          timeStamp: this.orderData.timeStamp,
           nonceStr: this.orderData.nonceStr,
           package: this.orderData.package,
           signType: this.orderData.signType,
           paySign: this.orderData.paySign,
           success: function (res) {
+            alert(res.errMsg)
             // 支付成功后的回调函数
             if (res.errMsg === 'chooseWXPay:ok') {
               alert('支付成功')
@@ -213,12 +217,12 @@ export default {
             }
           },
           fail: function (res) {
-            alert('支付失败')
+            alert(res.errMsg)
           }
         })
       },
       function (res) {
-        // alert(res.status)
+        alert(res.status)
       })
       // 充值提交
       console.log(this.mRecharge_Money)
@@ -242,7 +246,7 @@ export default {
     getrechargelog: function () {
       // 充值记录
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.get('wap/user/rechargelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
+      this.$http.get('/wap/user/rechargelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
         this.Data.push(res.data.data)
         this.More(res.data.data.offset)
         this.ReturnCode = parseInt(res.data.return_code)
@@ -254,7 +258,7 @@ export default {
     getconsumelog: function () {
       // 消费记录
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.get('wap/user/consumelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
+      this.$http.get('/wap/user/consumelog', {'params': {'session_id': sessionId, 'offset': this.mNum}}).then(function (res) {
         this.Data.push(res.data.data)
         this.More(res.data.data.offset)
         this.ReturnCode = parseInt(res.data.return_code)
@@ -290,7 +294,7 @@ export default {
     getrechargeAccount: function () {
       // 充值中心
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.get('wap/user/rechargeAccount', {'params': {'session_id': sessionId}}).then(function (res) {
+      this.$http.get('/wap/user/rechargeAccount', {'params': {'session_id': sessionId}}).then(function (res) {
         this.Data = res.data.data
         this.mRecharge_Money = this.Data.item[0].sum
         this.ReturnCode = parseInt(res.data.return_code)
@@ -302,7 +306,7 @@ export default {
     getsmsCode: function () {
       // 手机获取验证码
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.get('wap/user/smsCode', {'params': {'session_id': sessionId, 'phone': this.mPhone}}).then(function (res) {
+      this.$http.get('/wap/user/smsCode', {'params': {'session_id': sessionId, 'phone': this.mPhone}}).then(function (res) {
       },
       function (res) {
         alert(res.status)
@@ -311,7 +315,7 @@ export default {
     getmobile: function (val) {
       // 效验验证码
       let sessionId = sessionStorage.getItem('sessionId')
-      this.$http.get('wap/user/mobile', {'params': {'session_id': sessionId, 'phone': this.mPhone, 'sms_pwd': val}}).then(function (res) {
+      this.$http.get('/wap/user/mobile', {'params': {'session_id': sessionId, 'phone': this.mPhone, 'sms_pwd': val}}).then(function (res) {
         this.mobilerequest = true
         this.mobilecode = parseInt(res.data.return_code)
         if (this.mobilecode > 0) {
@@ -328,14 +332,12 @@ export default {
     },
     wxconfig: function () {
       this.wx.config({
-        debug: false,
+        debug: true,
         appId: this.config.app_id,
         timestamp: this.config.timestamp,
         nonceStr: this.config.nonce_str,
         signature: this.config.signature,
         jsApiList: ['chooseWXPay']
-      })
-      this.wx.ready(function () {
       })
       this.wx.error(function (res) {
         alert(res)
@@ -348,10 +350,10 @@ export default {
         this.configData = res.data.data
         this.config = this.configData.data
         this.wxconfig()
+      },
+      function (res) {
+        alert(res.status)
       })
-    },
-    callpay: function () {
-      this.getconfig()
     }
   },
   created: function () {
