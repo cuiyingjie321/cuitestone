@@ -10,7 +10,7 @@ Vue.use(VueResource)
 Vue.component('mNav', mNav)
 Vue.component('mHeader', mHeader)
 Vue.use(VueScroller)
-Vue.prototype.wx = wx 
+Vue.prototype.wx = wx
 Vue.config.productionTip = false
 Vue.http.options.emulateHTTP = true
 Vue.http.options.emulateJSON = true

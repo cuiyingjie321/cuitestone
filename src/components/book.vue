@@ -38,7 +38,7 @@
     <div v-if="mSideNav" class="mSideNav">
       <div class="mSideNav_List">
         <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ catalogInfoDetail.length }}章</div>
-        <router-link v-for="list in catalogInfoDetail" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if="list.free == 1">免费</span></router-link>
+        <router-link v-for="list in catalogInfoDetail" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id">{{ list.title }}<span v-if="list.free === 0">付费</span></router-link>
       </div>
     </div>
   </div>

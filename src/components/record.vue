@@ -203,7 +203,7 @@ export default {
         this.orderData = res.data.data
         this.wx.chooseWXPay({
           appId: this.orderData.appId,
-          timeStamp: this.orderData.timeStamp,
+          timestamp: this.orderData.timeStamp,
           nonceStr: this.orderData.nonceStr,
           package: this.orderData.package,
           signType: this.orderData.signType,

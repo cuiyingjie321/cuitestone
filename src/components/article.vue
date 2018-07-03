@@ -65,7 +65,7 @@
     <div :class="['mSideNav', { 'mSideNav_hov': mSideNav}]">
       <div id="mSideNav_List" class="mSideNav_List">
         <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ chapter_count }}章</div>
-        <div v-for="(list , index) in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 1">免费</span></div>
+        <div v-for="(list , index) in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 0">付费</span></div>
       </div>
     </div>
     <div v-if="mBuy" class="mBuy">
@@ -113,6 +113,8 @@ export default {
       mBookState: '',
       mBookPosition: 0, // 当前章节在数组中的位置
       mChoice: true,
+      is_pay: 0,
+      auto_pay: 0,
       mBuy: false
     }
   },
@@ -270,18 +272,33 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId')
       this.mChaptercontent = false
       this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id, 'session_id': sessionId}}).then(function (res) {
-        if (res.data.return_code === 2) {
-          // 未登录
-          alert('请先登录')
-          this.$router.push('/my')
+        alert(res.data.data.free)
+        if (res.data.data.free === 0) {
+          if (res.data.data.is_buy === 0) {
+            if (res.data.data.auto_pay === 0) {
+              if (res.data.return_code === 2) {
+                // 未登录
+                alert('请先登录')
+                this.$router.push('/my')
+              } else {
+                this.mBookName = res.data.data.title
+                this.mChaptercontent = res.data.data.content.split('\n')
+                this.mBuy = true
+              }
+            } else {
+              this.mBookName = res.data.data.title
+              this.mChaptercontent = res.data.data.content.split('\n')
+            }
+          } else {
+            this.mBookName = res.data.data.title
+            this.mChaptercontent = res.data.data.content.split('\n')
+            this.mBuy = false
+          }
         } else {
+          // 免费章节不显示购买
+          this.mBuy = false
           this.mBookName = res.data.data.title
           this.mChaptercontent = res.data.data.content.split('\n')
-          // 未购买
-          this.Code = 1
-          if (this.Code === 1) {
-            this.mBuy = true
-          }
         }
       },
       function (res) {
@@ -317,6 +334,38 @@ export default {
     },
     mBuyBtn_Determine: function () {
       // 购买弹窗 确定
+      this.mBuy = false
+      this.is_pay = 1
+      if (this.mChoice === true) {
+        this.auto_pay = 1
+      } else {
+        this.auto_pay = 0
+      }
+      let sessionId = sessionStorage.getItem('sessionId')
+      this.mChaptercontent = false
+      this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id, 'session_id': sessionId, is_pay: this.is_pay, auto_pay: this.auto_pay}}).then(function (res) {
+        if (res.data.return_code === 2) {
+          // 未登录
+          alert('请先登录')
+          this.$router.push('/my')
+        } else if (res.data.return_code === 3) {
+          // 余额不足时跳转到充值页面
+          alert('余额不足,请先充值')
+          this.$router.push('/record/?type=recharge')
+        } else if (res.data.return_code === 6) {
+          // 请求超时
+          alert('网络错误')
+        } else if (res.data.return_code === 0) {
+          // 余额充足时扣费完成弹窗消失
+          this.mBuy = false
+          this.mBookName = res.data.data.title
+          this.mChaptercontent = res.data.data.content.split('\n')
+          alert('购买完成')
+        }
+      },
+      function (res) {
+        alert(res.status)
+      })
       // this.$router.replace('/book?book_id=' + this.$route.query.book_id)
       // 是否连续购买 this.mChoice
       // 余额不足时跳转到充值页面 this.$router.push('/record/?type=recharge')
