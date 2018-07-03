@@ -61,11 +61,20 @@
       <div @click="mDayBtn"><span :class="{ hov:mDayTitle != '日间'}"></span><p :class="{ hov:mDayTitle != '日间'}">{{ mDayTitle }}</p></div>
       <div @click="mASetupBtn"><span :class="{ hov:mAticleSetup}"></span><p :class="{ hov:mAticleSetup}">设置</p></div>
     </div>
-    <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
+    <div v-if="mSideNav || mBuy" @click="mSideBtn" class="mSideNavBj"></div>
     <div :class="['mSideNav', { 'mSideNav_hov': mSideNav}]">
       <div id="mSideNav_List" class="mSideNav_List">
         <div class="mSideNav_Ti">{{ mBookState }} 本书共{{ chapter_count }}章</div>
         <div v-for="(list , index) in chapters" :key="list.id" :class="{ 'hov':list.chapter_id === chapters[nowNum].chapter_id}" @click="mSideNav_ListBtn(list.chapter_id, index)">{{ list.title }}<span v-if="list.free === 1">免费</span></div>
+      </div>
+    </div>
+    <div v-if="mBuy" class="mBuy">
+      <div class="mBuyBt">购买章节</div>
+      <div class="mBuyTi">{{ mBookName }}</div>
+      <div @click="mBuyChoice" class="mBuyChoice"><span :class="{ 'hov':mChoice}"></span>自动购买后续章节</div>
+      <div class="mBuyBtn_w">
+        <div @click="mBuyBtn_Cancel" class="mBuyBtn_a">取消</div>
+        <div @click="mBuyBtn_Determine" class="mBuyBtn_b">确定</div>
       </div>
     </div>
   </div>
@@ -102,7 +111,9 @@ export default {
       mPaging: 0, // url更新时请求数据
       chapter_count: 0,
       mBookState: '',
-      mBookPosition: 0 // 当前章节在数组中的位置
+      mBookPosition: 0, // 当前章节在数组中的位置
+      mChoice: true,
+      mBuy: false
     }
   },
   methods: {
@@ -111,10 +122,14 @@ export default {
     },
     mSideBtn: function () {
       // 侧导航展开关闭
-      this.mSideNav = !this.mSideNav
-      // 计算侧边栏打开时位置
-      if (this.mSideNav) {
-        document.getElementById('mSideNav_List').scrollTop = parseInt(this.mRatio * ((this.mBookPosition * 1.133333) * 75))
+      if (this.mBuy) {
+        this.mBuy = !this.mBuy
+      } else {
+        this.mSideNav = !this.mSideNav
+        // 计算侧边栏打开时位置
+        if (this.mSideNav) {
+          document.getElementById('mSideNav_List').scrollTop = parseInt(this.mRatio * ((this.mBookPosition * 1.133333) * 75))
+        }
       }
     },
     mASetupBtn: function () {
@@ -262,6 +277,11 @@ export default {
         } else {
           this.mBookName = res.data.data.title
           this.mChaptercontent = res.data.data.content.split('\n')
+          // 未购买
+          this.Code = 1
+          if (this.Code === 1) {
+            this.mBuy = true
+          }
         }
       },
       function (res) {
@@ -286,6 +306,21 @@ export default {
       function (res) {
         alert(res.status)
       })
+    },
+    mBuyChoice: function () {
+      // 购买弹窗 是否连续购买
+      this.mChoice = !this.mChoice
+    },
+    mBuyBtn_Cancel: function () {
+      // 购买弹窗 取消
+      this.$router.replace('/book?book_id=' + this.$route.query.book_id)
+    },
+    mBuyBtn_Determine: function () {
+      // 购买弹窗 确定
+      // this.$router.replace('/book?book_id=' + this.$route.query.book_id)
+      // 是否连续购买 this.mChoice
+      // 余额不足时跳转到充值页面 this.$router.push('/record/?type=recharge')
+      // 余额充足时弹窗消失 this.mBuy = false
     }
   },
   mounted: function () {
@@ -376,6 +411,17 @@ export default {
 .progressbar{width:0;height:0.066667rem;background-color:#56cd8a;font-size:0;line-height:0;}
 .bardrag{width:0.32rem;height:0.32rem;background-color:#454545;border:2px solid #56cd8a;border-radius:50%;position:absolute;top:50%;left:0;margin-top:-0.16rem;margin-left:-0.16rem;display:block;overflow:hidden;box-sizing:border-box;}
 .mASetup_BrightL_Bar{width:6.066667rem;margin-right:0.4rem;}
+.mBuy{width:7.2rem;position:fixed;top:50%;left:50%;background-color:#fff;border-radius:0.266667rem;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);overflow:hidden;z-index:3;}
+.mBuyBt,.mBuyTi,.mBuyChoice,.mBuyBtn_w{width:100%;font-size:0.426667rem;line-height:0.666667rem;text-align:center;overflow:hidden;box-sizing:border-box;}
+.mBuyBt{color:#42c079;margin-top:0.533333rem;}
+.mBuyTi{color:#2e3230;margin-top:0.133333rem;padding:0 0.4rem;}
+.mBuyChoice{color:#2e3230;font-size:0.32rem;line-height:0.586667rem;margin-top:0.133333rem;display:flex;justify-content:center;align-items:center;}
+.mBuyChoice span.hov{background:url(./../assets/images/mChoice_hov.png) no-repeat 0 0;background-size:cover;}
+.mBuyChoice span{width:0.32rem;height:0.32rem;background:url(./../assets/images/mChoice.png) no-repeat 0 0;background-size:cover;margin-right:0.2rem;display:flex;}
+.mBuyBtn_w{border-top:2px solid #eee;margin-top:0.4rem;display:flex;}
+.mBuyBtn_w div{width:50%;line-height:1.2rem;display:flex;justify-content:center;overflow:hidden;box-sizing:border-box;cursor:pointer;}
+.mBuyBtn_a{border-right:2px solid #eee;color:#707070;}
+.mBuyBtn_b{background-color:#42c079;color:#fff;}
 @-webkit-keyframes mSideNavR{
 0%{opacity:0;-webkit-transform:translate(-14rem,0);}
 100%{opacity:1;-webkit-transform:translate(0,0);}
