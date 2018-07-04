@@ -67,6 +67,7 @@ export default {
       if (!this.MyBookShelf[index].removeload) {
         Vue.set(this.MyBookShelf, index, {'book_id': this.MyBookShelf[index].book_id, 'cover_img': this.MyBookShelf[index].cover_img, 'name': this.MyBookShelf[index].name, 'removeload': true})
         let sessionId = sessionStorage.getItem('sessionId')
+        alert(sessionId)
         this.$http.get('/wap/book/bookCase', {'params': {'book_id': val, 'session_id': sessionId}}).then(function (res) {
           if (res.data.return_code === 0) {
             Vue.set(this.MyBookShelf, index, {'remove': true})

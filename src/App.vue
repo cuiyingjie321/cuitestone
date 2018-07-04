@@ -70,21 +70,21 @@ export default {
     document.getElementsByTagName('html')[0].style.fontSize = mOffsetWidth / 10 + 'px'
   },
   created: function () {
-    // let name = 'session_id'
-    // let sessionId = ''
-    // let beforeLoginUrl = window.location.href
-    // let sessionIdOne = this.getQueryString(name)
-    // let sessionIdTwo = sessionStorage.getItem('sessionId')
-    // if (sessionIdOne || sessionIdTwo) {
-    //   if (sessionIdOne) {
-    //     sessionId = sessionIdOne
-    //   } else {
-    //     sessionId = sessionIdTwo
-    //   }
-    //   sessionStorage.setItem('sessionId', sessionId)
-    // } else {
-    //   this.login(beforeLoginUrl)
-    // }
+     let name = 'session_id'
+     let sessionId = ''
+     let beforeLoginUrl = window.location.href
+     let sessionIdOne = this.getQueryString(name)
+     let sessionIdTwo = sessionStorage.getItem('sessionId')
+     if (sessionIdOne || sessionIdTwo) {
+       if (sessionIdOne) {
+         sessionId = sessionIdOne
+       } else {
+         sessionId = sessionIdTwo
+       }
+       sessionStorage.setItem('sessionId', sessionId)
+     } else {
+       this.login(beforeLoginUrl)
+     }
   },
   watch: {
     mASetup_Style: function () {
