@@ -72,7 +72,7 @@
 </template>
 
 <script>
-// RecordType recordrecharge 充值记录,recordconsume 消费记录,mName 标题,mPhone 电话号,mPhoneCould 电话号是否通过验证,mCode 验证码,mCodeCorrect 正确验证码,mCodePrompt 验证码提示,mCodePromptCould 验证码提示class显示,count 倒计时数字,Data 数据列表,Recharge 充值列表,mRecharge_Money 支付金额,mFontIndex 字体选择索引
+// RecordType recordrecharge 充值记录,recordconsume 消费记录,mName 标题,mPhone 电话号,mPhoneCould 电话号是否通过验证,mCode 验证码,mCodePrompt 验证码提示,mCodePromptCould 验证码提示class显示,count 倒计时数字,Data 数据列表,Recharge 充值列表,mRecharge_Money 支付金额,mFontIndex 字体选择索引
 export default {
   data () {
     return {
@@ -81,7 +81,6 @@ export default {
       mPhone: '',
       mPhoneCould: false,
       mCode: '',
-      mCodeCorrect: '',
       mCodePrompt: '发送短信',
       mCodePromptCould: false,
       mobilerequest: true,
@@ -134,8 +133,6 @@ export default {
     mCodeBtn: function () {
       // 发送请求 接受验证码
       if (this.mPhoneCould && !this.mCodePromptCould) {
-        // 正确验证码
-        // this.mCodeCorrect = 'mmmm'
         // 发送验证码
         this.getsmsCode()
         // 验证码倒计时

@@ -272,7 +272,6 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId')
       this.mChaptercontent = false
       this.$http.get('/wap/book/chapterInfo', {'params': {'book_id': this.$route.query.book_id, chapter_id: this.$route.query.chapter_id, 'session_id': sessionId}}).then(function (res) {
-        alert(res.data.data.free)
         if (res.data.data.free === 0) {
           if (res.data.data.is_buy === 0) {
             if (res.data.data.auto_pay === 0) {

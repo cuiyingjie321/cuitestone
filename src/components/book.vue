@@ -31,7 +31,7 @@
       <div v-if="!bookRecommend.books" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
     </div>
     <div v-if="chapterInfo.chapter_count" class="mBookNav">
-      <div @click="mBookShelf" class="mBookNavL">加入书架</div>
+      <div @click="mBookShelf" class="mBookNavL"><span v-if="dataAdd === 0 && this.dataAddLoad">加入书架</span><span v-if="dataAdd === 1 && this.dataAddLoad">移除书架</span><span v-if="!this.dataAddLoad">正在请求...</span></div>
       <router-link v-for="list in catalogInfoDetail.slice(0,1)" :key="list.id" :to="'/article?book_id='+dataDetail.book_id+'&chapter_id='+list.chapter_id" class="mBookNavR">免费试读</router-link>
     </div>
     <div v-if="mSideNav" @click="mSideBtn" class="mSideNavBj"></div>
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-// mMoreInfo_Zs 字数,mMoreInfo_Dx 大小,mMoreInfo_Rq 日期,mMoreInfo_Cbs 出版社,mMoreInfo_Sh 书号,mMoreInfo_Mz 免责声明,mSideNav 是否显示侧导航,Relevant 喜欢这本书的人也喜欢列表,Book 当前书籍信息,BookList 书籍目录
+// mMoreInfo_Zs 字数,mMoreInfo_Dx 大小,mMoreInfo_Rq 日期,mMoreInfo_Cbs 出版社,mMoreInfo_Sh 书号,mMoreInfo_Mz 免责声明,mSideNav 是否显示侧导航,Relevant 喜欢这本书的人也喜欢列表,Book 当前书籍信息,BookList 书籍目录,dataAdd 是否加入了书架,dataAddLoad 预防书架按钮多次点击
 export default {
   data () {
     return {
@@ -59,7 +59,9 @@ export default {
       mSideNav: '',
       mBookState: '',
       chapters: [],
-      mPaging: 0 // url更新时请求数据
+      mPaging: 0, // url更新时请求数据
+      dataAdd: 0,
+      dataAddLoad: true
     }
   },
   methods: {
@@ -72,6 +74,22 @@ export default {
     },
     mBookShelf: function () {
       // 加入书架
+      if (this.dataAddLoad === true) {
+        this.dataAddLoad = false
+        let sessionId = sessionStorage.getItem('sessionId')
+        this.$http.get('/wap/book/bookCase', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
+          this.dataAdd = (this.dataAdd === 0) ? 1 : 0
+          if (res.data.data.status === 1) {
+            alert('加入书架成功')
+          } else {
+            alert('移除书架成功')
+          }
+          this.dataAddLoad = true
+        },
+        function (res) {
+          alert(res.status)
+        })
+      }
     },
     getbookrecommend: function () {
       this.$http.get('/wap/book/bookRecommend', {'params': {'book_id': this.$route.query.book_id}}).then(function (res) {
@@ -86,6 +104,7 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId')
       this.$http.get('/wap/book', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
         this.dataInfo = res.data
+        this.dataAdd = this.dataInfo.data.is_add
         this.dataDetail = this.dataInfo.data.books.info
         this.chapterInfo = this.dataInfo.data.books.chapter_info
         this.chapters = this.dataInfo.data.books.chapter_info.chapters
