@@ -78,13 +78,21 @@ export default {
         this.dataAddLoad = false
         let sessionId = sessionStorage.getItem('sessionId')
         this.$http.get('/wap/book/bookCase', {'params': {'book_id': this.$route.query.book_id, 'session_id': sessionId}}).then(function (res) {
-          this.dataAdd = (this.dataAdd === 0) ? 1 : 0
-          if (res.data.data.status === 1) {
-            alert('加入书架成功')
+          if (res.data.return_code === 0) {
+            this.dataAdd = (this.dataAdd === 0) ? 1 : 0
+            if (res.data.data.status === 1) {
+              alert('加入书架成功')
+            } else {
+              alert('移除书架成功')
+            }
+            this.dataAddLoad = true
           } else {
-            alert('移除书架成功')
+            if (this.dataAdd === 0) {
+              alert('加入书架失败')
+            } else {
+              alert('移除书架失败')
+            }
           }
-          this.dataAddLoad = true
         },
         function (res) {
           alert(res.status)
