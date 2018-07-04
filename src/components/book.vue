@@ -85,7 +85,6 @@ export default {
             } else {
               alert('移除书架成功')
             }
-            this.dataAddLoad = true
           } else {
             if (this.dataAdd === 0) {
               alert('加入书架失败')
@@ -93,6 +92,7 @@ export default {
               alert('移除书架失败')
             }
           }
+          this.dataAddLoad = true
         },
         function (res) {
           alert(res.status)
