@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <m-header v-if="!mHeaderHide" :mType="mType" :mTitle="mName" :mHeaderFixed="mHeaderFixed" @mKeywordReceive="mKeywordReceive"></m-header>
+    <m-header v-if="!mHeaderHide" :mType="mType" :mTitle="mName" :mHeaderFixed="mHeaderFixed" :mKeywordHot="mKeywordHot" @mKeywordReceive="mKeywordReceive"></m-header>
     <router-view @mParameter="mParameters" :mKeyword="mKeyword"></router-view>
     <m-nav v-if="mNav" :mIndex="mIndex"></m-nav>
   </div>
@@ -14,6 +14,7 @@ export default {
       mType: '0',
       mHeaderHide: '',
       mHeaderFixed: false,
+      mKeywordHot: false,
       mNav: 'true',
       mIndex: '0',
       mStyle: '',
@@ -29,6 +30,7 @@ export default {
       this.mNav = msg.mNav
       this.mHeaderHide = msg.mHeaderHide
       this.mHeaderFixed = msg.mHeaderFixed
+      this.mKeywordHot = msg.mKeywordHot
       this.mIndex = msg.mIndex
       this.mStyle = msg.mStyle
       this.mName = msg.mName
@@ -70,21 +72,21 @@ export default {
     document.getElementsByTagName('html')[0].style.fontSize = mOffsetWidth / 10 + 'px'
   },
   created: function () {
-    let name = 'session_id'
-    let sessionId = ''
-    let beforeLoginUrl = window.location.href
-    let sessionIdOne = this.getQueryString(name)
-    let sessionIdTwo = sessionStorage.getItem('sessionId')
-    if (sessionIdOne || sessionIdTwo) {
-      if (sessionIdOne) {
-        sessionId = sessionIdOne
-      } else {
-        sessionId = sessionIdTwo
-      }
-      sessionStorage.setItem('sessionId', sessionId)
-    } else {
-      this.login(beforeLoginUrl)
-    }
+    // let name = 'session_id'
+    // let sessionId = ''
+    // let beforeLoginUrl = window.location.href
+    // let sessionIdOne = this.getQueryString(name)
+    // let sessionIdTwo = sessionStorage.getItem('sessionId')
+    // if (sessionIdOne || sessionIdTwo) {
+    //   if (sessionIdOne) {
+    //     sessionId = sessionIdOne
+    //   } else {
+    //     sessionId = sessionIdTwo
+    //   }
+    //   sessionStorage.setItem('sessionId', sessionId)
+    // } else {
+    //   this.login(beforeLoginUrl)
+    // }
   },
   watch: {
     mASetup_Style: function () {

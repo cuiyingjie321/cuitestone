@@ -23,7 +23,7 @@ export default {
       mKeyword: ''
     }
   },
-  props: ['mType', 'mTitle', 'mHeaderFixed'],
+  props: ['mType', 'mTitle', 'mHeaderFixed', 'mKeywordHot'],
   methods: {
     back: function () {
       this.$router.go(-1)
@@ -35,6 +35,11 @@ export default {
       if (this.$route.path !== '/search') {
         this.$router.push('/search')
       }
+    }
+  },
+  watch: {
+    mKeywordHot: function (val) {
+      this.mKeyword = val
     }
   }
 }
