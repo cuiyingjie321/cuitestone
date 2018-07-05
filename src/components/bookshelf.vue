@@ -6,7 +6,7 @@
         <ul v-if="MyBookShelfMsg" class="mModuleList">
           <li v-for="(list , index) in MyBookShelf" :key="list.id" v-if="!list.remove"><router-link :to="'/book?book_id='+list.book_id"><span><img :src="list.cover_img" :alt="list.name"/></span><p>{{ list.name }}</p></router-link><div v-if="mBookShelfBtn" class="mRemoveBj"></div><i @click="mRemove(list.book_id, index)" v-if="mBookShelfBtn" :class="['mRemove', { 'mRemove_hov': list.removeload}]"></i><div v-if="list.removeload" class="mLoadRemove"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div></li>
         </ul>
-        <div v-if="MyBookShelfMsg && !MyBookShelf" class="mModuleNull">还没有阅读，快去阅读吧~</div>
+        <div v-if="MyBookShelfMsg === 'ok' && MyBookShelf.length === 0" class="mModuleNull">还没有阅读，快去阅读吧~</div>
         <div v-if="!MyBookShelfMsg" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
       </div>
       <div class="mModule">
@@ -41,17 +41,10 @@ export default {
       if (!sessionId) {
         sessionId = 0
       }
-      this.$http.get('/wap', {'params': {'offset': 0, 'session_id': sessionId}}).then(function (res) {
-        this.MyBookShelf = res.data.data.books
-        this.MyBookShelfMsg = res.data.return_msg
-      },
-      function (res) {
-        // alert(res.status)
-      })
-    },
-    getbookRecommend: function () {
-      this.$http.get('/wap/index/bookRecommend', {}).then(function (res) {
+      this.$http.get('/wap/index', {'params': {'offset': 0, 'session_id': sessionId}}).then(function (res) {
+        this.MyBookShelf = res.data.data.item
         this.Relevant = res.data.data.books
+        this.MyBookShelfMsg = res.data.return_msg
         this.RelevantMsg = res.data.return_msg
       },
       function (res) {
@@ -67,7 +60,6 @@ export default {
       if (!this.MyBookShelf[index].removeload) {
         Vue.set(this.MyBookShelf, index, {'book_id': this.MyBookShelf[index].book_id, 'cover_img': this.MyBookShelf[index].cover_img, 'name': this.MyBookShelf[index].name, 'removeload': true})
         let sessionId = sessionStorage.getItem('sessionId')
-        alert(sessionId)
         this.$http.get('/wap/book/bookCase', {'params': {'book_id': val, 'session_id': sessionId}}).then(function (res) {
           if (res.data.return_code === 0) {
             Vue.set(this.MyBookShelf, index, {'remove': true})
@@ -85,7 +77,6 @@ export default {
   created: function () {
     this.parameter()
     this.getbooklist()
-    this.getbookRecommend()
   }
 }
 </script>
