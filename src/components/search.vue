@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    {{mFinalkeyword}}
     <div v-if="!mFinalkeyword" class="mHistory_w">
       <div class="mHistory_Ti">历史搜索<img src="./../assets/images/mMyIcon_11.png" alt="删除历史搜索" @click="Delete"></div>
       <div class="mHistory_Te">
@@ -45,7 +44,7 @@
   </div>
 </template>
 <script>
-// default 默认关键词,mKeyword 搜索关键词,History 历史搜索列表,Hot 热门搜索列表,Result 结果列表
+// default 默认关键词,mKeyword 搜索关键词,History 历史搜索列表,Hot 热门搜索列表,Result 结果列表,oldkeyword 预防连续相同的关键词请求
 export default {
   data () {
     return {
@@ -56,17 +55,11 @@ export default {
       descInfo: '',
       mFinalkeyword: false,
       mDeleteLoad: true,
-      DataCode: false
+      DataCode: false,
+      oldkeyword: ''
     }
   },
   props: ['mKeyword'],
-  watch: {
-    mKeyword: function (val) {
-      // 因历史、热门记录传值直接改变mKeyword会报错
-      this.mFinalkeyword = (val === '') ? false : val
-      this.getbooklist(val)
-    }
-  },
   methods: {
     parameter: function () {
       this.$emit('mParameter', {'mType': '1'})
@@ -91,11 +84,12 @@ export default {
       })
     },
     // 搜索结果
-    getbooklist: function (curVal, oldVal) {
-      if (curVal) {
+    getbooklist: function (curVal) {
+      if (curVal && curVal !== this.oldkeyword) {
         this.booklist = []
         this.relatedBook = []
         this.descInfo = ''
+        this.oldkeyword = curVal
         let sessionId = sessionStorage.getItem('sessionId')
         this.$http.get('/wap/search', {'params': {'keywords': curVal, 'session_id': sessionId}}).then(function (res) {
           this.booklist = res.data.data.books
@@ -126,11 +120,19 @@ export default {
     // 搜索按钮(历史搜索、热门搜索)
     mSearchBtn: function (val) {
       this.mFinalkeyword = val
+      sessionStorage.setItem('keyword', val)
+      this.$emit('mParameter', {'mType': '1', 'mKeywordHot': Math.random()})
       this.getbooklist(val)
-      alert(val)
-      this.$emit('mParameter', {'mType': '1', 'mKeywordHot': val})
     }
   // 缺少同类书籍推荐
+  },
+  watch: {
+    mKeyword: function () {
+      // 接收header页面传的随机数后获取session keyword
+      let val = sessionStorage.getItem('keyword')
+      this.mFinalkeyword = val
+      this.getbooklist(val)
+    }
   },
   created: function () {
     this.parameter()

@@ -20,7 +20,8 @@ export default {
   data () {
     return {
       mDefault: '烈火如歌',
-      mKeyword: ''
+      mKeyword: '',
+      SessionKeyword: sessionStorage.getItem('keyword')
     }
   },
   props: ['mType', 'mTitle', 'mHeaderFixed', 'mKeywordHot'],
@@ -29,7 +30,8 @@ export default {
       this.$router.go(-1)
     },
     mSearchBtn: function () {
-      this.$emit('mKeywordReceive', this.mKeyword)
+      this.$emit('mKeywordReceive', Math.random())
+      sessionStorage.setItem('keyword', this.mKeyword)
     },
     mSearchFocus: function () {
       if (this.$route.path !== '/search') {
@@ -38,8 +40,9 @@ export default {
     }
   },
   watch: {
-    mKeywordHot: function (val) {
-      this.mKeyword = val
+    mKeywordHot: function () {
+      // 接收搜索页面传的随机数后获取session keyword
+      this.mKeyword = sessionStorage.getItem('keyword')
     }
   }
 }
