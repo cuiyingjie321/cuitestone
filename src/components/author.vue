@@ -1,5 +1,5 @@
 <template>
-  <div>微信授权登陆中~~~~</div>
+  <div class="mWxDl">微信授权登陆中~~~~</div>
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     parameter: function () {
-      this.$emit('mParameter', {'mType': '1'})
+      this.$emit('mParameter', {'mType': '1', 'mHeaderHide': true})
     },
     login: function () {
       let url = 'http://wenxue.china.com/index.html#/author'
@@ -34,6 +34,7 @@ export default {
     }
   },
   created: function () {
+    this.parameter()
     let name = 'session_id'
     let sessionId = ''
     let beforeLoginUrl = sessionStorage.getItem('beforeLoginUrl')
@@ -53,3 +54,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .mWxDl{width:10rem;font-size:0.426667rem;color:#262b33;line-height:1rem;text-align:center;position:fixed;top:50%;left:50%;margin-top:-0.5rem;margin-left:-5rem;}
+</style>
