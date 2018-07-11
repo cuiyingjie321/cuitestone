@@ -27,7 +27,7 @@
           <div v-if="!dataInfoChannelA.channel_name" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
           <h3 class="mModuleTi mModuleTi1">女生频道</h3>
           <div class="mModuleTe"><router-link :to="'/classifylist?category_id='+dataInfoChannelB.category_id">{{ dataInfoChannelB.label }}</router-link></div>
-          <router-link v-if="dataInfoChannelB.channel_name" to="/classifylist?id=13" class="mGoodBookBtn2">言情细腻</router-link>
+          <router-link v-if="dataInfoChannelB.channel_name" :to="'/classifylist?category_id='+dataInfoChannelB.category_id" class="mGoodBookBtn2">言情细腻</router-link>
           <div v-if="!dataInfoChannelB.channel_name" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
         </div>
       </div>
