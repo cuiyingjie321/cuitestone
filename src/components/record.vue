@@ -210,7 +210,6 @@ export default {
             signType: this.orderData.signType,
             paySign: this.orderData.paySign,
             success: function (res) {
-              alert(res.errMsg)
               // 支付成功后的回调函数
               if (res.errMsg === 'chooseWXPay:ok') {
                 alert('支付成功')
@@ -219,11 +218,11 @@ export default {
             },
             cancel: function (res) {
               alert('支付取消')
-              window.location.href = 'http://wenxue.china.com/#/record/?type=recharge'
+              window.location.href = 'http://wenxue.china.com/#/my'
             },
             fail: function (res) {
-              alert(res.errMsg)
-              window.location.href = 'http://wenxue.china.com/#/record/?type=recharge'
+              alert('网络错误')
+              window.location.href = 'http://wenxue.china.com/#/my'
             }
           })
         },
@@ -231,7 +230,7 @@ export default {
           alert(res.status)
         })
         // 充值提交
-        console.log(this.mRecharge_Money)
+        // console.log(this.mRecharge_Money)
       }
     },
     mFontBtn: function (index) {
