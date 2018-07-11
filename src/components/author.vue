@@ -1,5 +1,5 @@
 <template>
-  <div class="mWxDl">微信授权登陆中~~~~</div>
+  <div class="mWxDl">微信授权登陆中···</div>
 </template>
 
 <script>
