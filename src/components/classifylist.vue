@@ -7,7 +7,7 @@
           <router-link :to="'/book?book_id='+list.book_id" class="mModuleaL"><img :src="list.cover_img" :alt="list.name"/></router-link>
           <div class="mModuleaR">
             <div class="mModuleaR_Ti"><router-link :to="'/book?book_id='+list.book_id">{{ list.name }}</router-link></div>
-            <div class="mModuleaR_Te">{{ list.desc }}</div>
+            <div class="mModuleaR_Te"><router-link :to="'/book?book_id='+list.book_id">{{ list.desc }}</router-link></div>
           </div>
           <div class="mModuleaR_Author">{{ list.author }}</div>
           <div class="mModuleaR_Read">{{ list.read_num }}人阅读</div>

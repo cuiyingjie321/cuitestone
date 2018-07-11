@@ -23,7 +23,7 @@
         <div class="mGoodBookR">
           <h3 class="mModuleTi">男生频道</h3>
           <div class="mModuleTe"><router-link :to="'/classifylist?category_id='+dataInfoChannelA.category_id">{{ dataInfoChannelA.label }}</router-link></div>
-          <router-link v-if="dataInfoChannelA.channel_name" to="'/classifylist?category_id='+dataInfoChannelA.category_id" class="mGoodBookBtn1">壮志豪言</router-link>
+          <router-link v-if="dataInfoChannelA.channel_name" :to="'/classifylist?category_id='+dataInfoChannelA.category_id" class="mGoodBookBtn1">壮志豪言</router-link>
           <div v-if="!dataInfoChannelA.channel_name" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
           <h3 class="mModuleTi mModuleTi1">女生频道</h3>
           <div class="mModuleTe"><router-link :to="'/classifylist?category_id='+dataInfoChannelB.category_id">{{ dataInfoChannelB.label }}</router-link></div>
