@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+
+#Ê×Ò³
+RewriteCond %{HTTP_HOST} ^wenxue.china.com$ [NC]
+RewriteRule ^index.html$ / [L]
+
+</IfModule>

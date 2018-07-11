@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div>微信授权登陆中~~~~</div>
 </template>
 
 <script>
@@ -14,17 +14,39 @@ export default {
       this.$emit('mParameter', {'mType': '1'})
     },
     login: function () {
-      window.location.href = 'http://wenxueww.creditdev.com/wx/login/url'
+      let url = 'http://wenxue.china.com/index.html#/author'
+      window.location.href = 'http://wenxueapptest.creditdev.com/wx/login/url?state=' + encodeURIComponent(url)
+    },
+    getQueryString: function (name) {
+      let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+      let r1 = window.location.href
+      let r2 = r1.split('?')
+      if (r2[1]) {
+        let r = r2[1].match(reg)
+        if (r !== null) {
+          return unescape(r[2])
+        } else {
+          return null
+        }
+      } else {
+        return null
+      }
     }
   },
   created: function () {
-    let sessionId = this.$route.query.session_id
-    if (!sessionId) {
-      sessionId = sessionStorage.getItem('sessionId')
-    }
-    if (sessionId) {
+    let name = 'session_id'
+    let sessionId = ''
+    let beforeLoginUrl = sessionStorage.getItem('beforeLoginUrl')
+    let sessionIdOne = this.getQueryString(name)
+    let sessionIdTwo = sessionStorage.getItem('sessionId')
+    if (sessionIdOne || sessionIdTwo) {
+      if (sessionIdOne) {
+        sessionId = sessionIdOne
+      } else {
+        sessionId = sessionIdTwo
+      }
       sessionStorage.setItem('sessionId', sessionId)
-      window.location.href = '/'
+      window.location.href = beforeLoginUrl
     } else {
       this.login()
     }

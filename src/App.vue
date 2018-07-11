@@ -41,18 +41,6 @@ export default {
     mKeywordReceive: function (msg) {
       // 从header子组件接收关键词 发送到搜索组件里
       this.mKeyword = msg
-    },
-    login: function (beforeLoginUrl) {
-      window.location.href = 'http://wenxueww.creditdev.com/wx/login/url?state=' + encodeURI(beforeLoginUrl)
-    },
-    getQueryString: function (name) {
-      let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
-      let r = window.location.search.substr(1).match(reg)
-      if (r !== null) {
-        return unescape(r[2])
-      } else {
-        return null
-      }
     }
   },
   updated () {
@@ -64,7 +52,7 @@ export default {
       document.querySelector('body').classList.remove('myClass')
     }
     if (!this.mName) {
-      this.mName = this.$route.name
+      this.mName = this.$route.meta.title
     }
   },
   beforeCreate: function () {
@@ -72,21 +60,6 @@ export default {
     document.getElementsByTagName('html')[0].style.fontSize = mOffsetWidth / 10 + 'px'
   },
   created: function () {
-    // let name = 'session_id'
-    // let sessionId = ''
-    // let beforeLoginUrl = window.location.href
-    // let sessionIdOne = this.getQueryString(name)
-    // let sessionIdTwo = sessionStorage.getItem('sessionId')
-    // if (sessionIdOne || sessionIdTwo) {
-    //   if (sessionIdOne) {
-    //     sessionId = sessionIdOne
-    //   } else {
-    //     sessionId = sessionIdTwo
-    //   }
-    //   sessionStorage.setItem('sessionId', sessionId)
-    // } else {
-    //   this.login(beforeLoginUrl)
-    // }
   },
   watch: {
     mASetup_Style: function () {

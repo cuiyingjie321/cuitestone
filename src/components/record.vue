@@ -58,6 +58,7 @@
         <li v-for="(list , index) in Data.item" :key="list.id" :class="{ hov:mRechargeIndex == index}" @click="mRechargeBtn(index)"><span>{{ list.sum }}</span><p>{{ list.petals }}</p></li>
       </ul>
       <div class="mRecharge_Money">支付金额：<span>{{ mRecharge_Money }}</span></div>
+      <div v-if="!this.mRechargeLoad" class="mLoad"><img src="./../assets/images/mLoad.gif" alt="加载中..." /></div>
       <div class="mRecharge_Submit" @click="mRecharge_Submit"><img src="./../assets/images/mMyIcon_9.png" alt="立即支付"/>立即支付</div>
       <div class="mRecharge_Prompt">温馨提示：<br/>1. 花瓣兑换规则：1元＝100花瓣<br/>2. 充值阅读权仅限在书城使用</div>
     </div>
@@ -97,6 +98,7 @@ export default {
       mNum: 0,
       mExercise: true,
       mFixed: false,
+      mRechargeLoad: true,
       Font: [{
         title: '默认'
       }, {
@@ -194,35 +196,43 @@ export default {
       this.mRecharge_Money = this.Data.item[index].sum
     },
     mRecharge_Submit: function (index) {
-      let sessionId = sessionStorage.getItem('sessionId')
-      this.mRecharge_Moneys = parseInt(this.mRecharge_Money)
-      this.$http.post('/wap/user/weixin', {'sessionId': sessionId, 'money': this.mRecharge_Moneys}).then(function (res) {
-        this.orderData = res.data.data
-        this.wx.chooseWXPay({
-          appId: this.orderData.appId,
-          timestamp: this.orderData.timeStamp,
-          nonceStr: this.orderData.nonceStr,
-          package: this.orderData.package,
-          signType: this.orderData.signType,
-          paySign: this.orderData.paySign,
-          success: function (res) {
-            alert(res.errMsg)
-            // 支付成功后的回调函数
-            if (res.errMsg === 'chooseWXPay:ok') {
-              alert('支付成功')
-              window.location.href = '/my'
+      if (this.mRechargeLoad) {
+        this.mRechargeLoad = false
+        let sessionId = sessionStorage.getItem('sessionId')
+        this.mRecharge_Moneys = parseInt(this.mRecharge_Money)
+        this.$http.post('/wap/user/weixin', {'sessionId': sessionId, 'money': this.mRecharge_Moneys}).then(function (res) {
+          this.orderData = res.data.data
+          this.wx.chooseWXPay({
+            appId: this.orderData.appId,
+            timestamp: this.orderData.timeStamp,
+            nonceStr: this.orderData.nonceStr,
+            package: this.orderData.package,
+            signType: this.orderData.signType,
+            paySign: this.orderData.paySign,
+            success: function (res) {
+              alert(res.errMsg)
+              // 支付成功后的回调函数
+              if (res.errMsg === 'chooseWXPay:ok') {
+                alert('支付成功')
+                window.location.href = 'http://wenxue.china.com/#/my'
+              }
+            },
+            cancel: function (res) {
+              alert('支付取消')
+              window.location.href = 'http://wenxue.china.com/#/record/?type=recharge'
+            },
+            fail: function (res) {
+              alert(res.errMsg)
+              window.location.href = 'http://wenxue.china.com/#/record/?type=recharge'
             }
-          },
-          fail: function (res) {
-            alert(res.errMsg)
-          }
+          })
+        },
+        function (res) {
+          alert(res.status)
         })
-      },
-      function (res) {
-        alert(res.status)
-      })
-      // 充值提交
-      console.log(this.mRecharge_Money)
+        // 充值提交
+        console.log(this.mRecharge_Money)
+      }
     },
     mFontBtn: function (index) {
       // 字体选择
@@ -329,7 +339,7 @@ export default {
     },
     wxconfig: function () {
       this.wx.config({
-        debug: true,
+        debug: false,
         appId: this.config.app_id,
         timestamp: this.config.timestamp,
         nonceStr: this.config.nonce_str,
@@ -337,7 +347,7 @@ export default {
         jsApiList: ['chooseWXPay']
       })
       this.wx.error(function (res) {
-        alert(res)
+        alert('网络错误')
       })
     },
     getconfig: function () {
@@ -351,6 +361,11 @@ export default {
       function (res) {
         alert(res.status)
       })
+    },
+    redirecturl: function () {
+      alert('111')
+      this.mRechargeLoad = true
+      this.$router.push('/my')
     }
   },
   created: function () {
@@ -385,6 +400,10 @@ export default {
       if (val === 2) {
         this.NotLogged()
       }
+    },
+    // 返回状态码
+    mRechargeLoads: function () {
+      this.mRechargeLoad = true
     }
   }
 }

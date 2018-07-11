@@ -10,7 +10,7 @@ export default {
   data () {
     return {
       mNavs: [{
-        href: '/',
+        href: '/bookshelf',
         name: '书架'
       }, {
         href: '/choice',

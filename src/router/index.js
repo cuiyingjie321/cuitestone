@@ -2,55 +2,72 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 export default new Router({
-  mode: 'history',
+  mode: 'hash',
   routes: [
     {
       path: '/',
-      name: '书架',
+      name: 'bookshelf',
+      meta: { title: '书架' },
+      component: resolve => require(['@/components/bookshelf'], resolve)
+    }, {
+      path: '/bookshelf',
+      name: 'bookshelf',
+      meta: { title: '书架' },
       component: resolve => require(['@/components/bookshelf'], resolve)
     }, {
       path: '/choice',
-      name: '精选',
+      name: 'choice',
+      meta: { title: '精选' },
       component: resolve => require(['@/components/choice'], resolve)
     }, {
       path: '/list',
-      name: '书城',
+      name: 'list',
+      meta: { title: '书城' },
       component: resolve => require(['@/components/list'], resolve)
     }, {
       path: '/my',
       name: '我的',
+      meta: { title: '我的' },
       component: resolve => require(['@/components/my'], resolve)
     }, {
       path: '/classifylist',
-      name: '小说频道',
+      name: 'classifylist',
+      meta: { title: '小说频道' },
       component: resolve => require(['@/components/classifylist'], resolve)
     }, {
       path: '/recentreading',
-      name: '最近阅读',
+      name: 'recentreading',
+      meta: { title: '书架' },
       component: resolve => require(['@/components/recentreading'], resolve)
     }, {
       path: '/record',
-      name: '我的相关',
+      name: 'record',
+      meta: { title: '我的相关' },
       component: resolve => require(['@/components/record'], resolve)
     }, {
       path: '/about',
-      name: '关于我们',
+      name: 'about',
+      meta: { title: '关于我们' },
       component: resolve => require(['@/components/about'], resolve)
     }, {
       path: '/search',
-      name: '搜索',
+      name: 'search',
+      meta: { title: '搜索' },
       component: resolve => require(['@/components/search'], resolve)
     }, {
       path: '/book',
-      name: '书籍详情',
+      name: 'book',
+      meta: { title: '书籍详情' },
       component: resolve => require(['@/components/book'], resolve)
     }, {
       path: '/article',
-      name: '书籍名称',
+      name: 'article',
+      meta: { title: '书籍名称' },
       component: resolve => require(['@/components/article'], resolve)
     }, {
       path: '/author',
-      name: '微信授权',
+      name: 'author',
+      meta: { title: '微信授权' },
       component: resolve => require(['@/components/author'], resolve)
     }
   ]
