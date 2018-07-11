@@ -9,8 +9,9 @@
       <div class="mHeaderaChoiceR"><input type="submit" value="搜索" @click="mSearchBtn"/></div>
     </div>
     <div v-else-if="mType == 2 || mType == 3 || mType == 4" :class="['mHeaderb', { mHeaderc: mType == 4 }]">
-      <div v-if="mType == 3 || mType == 4" v-on:click="back" class="mHeaderb_Back">返回</div>
+      <div v-if="mType == 3 || mType == 4" @click="back" class="mHeaderb_Back">返回</div>
       <div class="mHeaderb_Ti">{{mTitle}}</div>
+      <div @click="backindex" class="mIndex_Back">返回首页</div>
     </div>
   </header>
 </template>
@@ -28,6 +29,9 @@ export default {
   methods: {
     back: function () {
       this.$router.go(-1)
+    },
+    backindex: function () {
+      this.$router.push('/')
     },
     mSearchBtn: function () {
       this.$emit('mKeywordReceive', Math.random())
@@ -67,4 +71,5 @@ export default {
 .mHeaderc{background-color:#2c2a2b;}
 .mHeaderc .mHeaderb_Ti{color:#fff;}
 .mHeaderc .mHeaderb_Back{background:url(./../../assets/images/mBack_2.png) no-repeat 0 0;background-size:0.293333rem 0.586667rem;}
+.mIndex_Back{width:0.586667rem;height:0.586667rem;position:absolute;top:50%;right:0.4rem;margin-top:-0.293333rem;background:url(./../../assets/images/mHome.png) no-repeat 0 0;background-size:cover;display:block;overflow:hidden;text-indent:-1000em;cursor:pointer;}
 </style>
